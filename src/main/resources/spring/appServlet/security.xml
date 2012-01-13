@@ -1,0 +1,80 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<!-- *********** SECURITY CONFIGURATION FOR CAS AUTHENTICATION *********** 
+	<http auto-config="false" entry-point-ref="casAuthEntryPoint" use-expressions="true">
+		<intercept-url pattern="/login" access="isAnonymous()" />
+		<intercept-url pattern="/home" access="isAuthenticated()" />
+		<logout logout-success-url="https://cas.mkcl.org/logout"
+			invalidate-session="true" />
+		<custom-filter position="CAS_FILTER" ref="casAuthenticationFilter" />
+		<session-management>
+			<concurrency-control expired-url="https://cas.mkcl.org/logout" />
+		</session-management>
+		<remember-me />
+	</http>
+	<beans:bean id="casAuthEntryPoint"
+		class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+		<beans:property name="loginUrl" value="https://cas.mkcl.org/login" />
+		<beans:property name="serviceProperties" ref="serviceProperties" />
+	</beans:bean>
+
+	<beans:bean id="serviceProperties"
+		class="org.springframework.security.cas.ServiceProperties">
+		<beans:property name="service"
+			value="http://insync.mkcl.org/insync-flow/j_spring_cas_security_check" />
+		<beans:property name="sendRenew" value="false"></beans:property>
+	</beans:bean>
+
+	<beans:bean id="casAuthenticationFilter"
+		class="org.springframework.security.cas.web.CasAuthenticationFilter">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="authenticationFailureHandler">
+			<beans:bean
+				class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<beans:property name="defaultFailureUrl"
+					value="https://cas.mkcl.org/usernotfoundatclientapp.jsp" />
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider ref="casAuthenticationProvider">
+		</authentication-provider>
+	</authentication-manager>
+
+	<beans:bean id="casAuthenticationProvider"
+		class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+		<beans:property name="ticketValidator" ref="casTicketValidator" />
+		<beans:property name="serviceProperties" ref="serviceProperties" />
+		<beans:property name="key" value="casAuthenticationProvider" />
+		<beans:property name="userDetailsService" ref="securityService" />
+	</beans:bean>
+
+	<beans:bean id="casTicketValidator"
+		class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
+		<beans:constructor-arg index="0"
+			value="https://cas.mkcl.org/" />
+	</beans:bean>-->
+	
+	
+	<!-- *********** SECURITY CONFIGURATION FOR DB AUTHENTICATION *********** -->
+	<http auto-config="false" use-expressions="true">
+		<intercept-url pattern="/login" access="isAnonymous()" />
+		<intercept-url pattern="/home" access="isAuthenticated()" />
+		<form-login login-page="/login.htm" default-target-url="/home.htm"
+			authentication-failure-url="/login?error=true" />
+		<logout logout-success-url="/login.htm" invalidate-session="true"/>
+		<session-management invalid-session-url="/login.htm" />
+	</http>
+
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="securityService">
+		</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>

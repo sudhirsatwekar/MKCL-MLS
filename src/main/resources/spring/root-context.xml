@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
+    http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+    http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<context:load-time-weaver/>
+	<context:spring-configured />
+	
+	<context:component-scan base-package="org.mkcl.els,com.trg.search" />
+	<context:property-placeholder location="classpath:props/${spring.profiles.active}/app.properties" />
+	<!-- Disable caching -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="cacheSeconds" value="0" />
+    </bean>
+	<!-- declare the MessageSource bean -->
+	<bean id="messageSource"
+		class="org.mkcl.els.common.util.DatabaseDrivenMessageSource">
+		<property name="cacheSeconds" value="0" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="els" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="${db.platform}" />
+				<property name="showSql" value="${db.showSql}" />
+				<property name="generateDdl" value="${db.generateDdl}" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy
+                </prop>
+			</props>
+		</property>
+	</bean>
+
+	<tx:annotation-driven mode="aspectj"
+		transaction-manager="transactionManager" />
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="searchProcessor" class="com.trg.search.jpa.JPASearchProcessor">
+		<constructor-arg ref="metadataUtil" />
+	</bean>
+
+	<bean id="metadataUtil" class="com.trg.search.jpa.hibernate.HibernateMetadataUtil"
+		factory-method="getInstanceForEntityManagerFactory">
+		<constructor-arg ref="entityManagerFactory" />
+	</bean>
+	<ehcache:annotation-driven cache-manager="ehCacheManager" />
+	<bean id="ehCacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+	</bean>
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="port" value="${mail.port}" />
+		<property name="username" value="${mail.username}" />
+		<property name="password" value="${mail.password}" />
+		<property name="javaMailProperties">
+			<props>
+				<!-- Use SMTP transport protocol -->
+				<prop key="mail.transport.protocol">smtp</prop>
+				<!-- Use SMTP-AUTH to authenticate to SMTP server -->
+				<prop key="mail.smtp.auth">true</prop>
+				<!-- Use TLS to encrypt communication with SMTP server -->
+				<prop key="mail.smtp.starttls.enable">false</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="elsMessage" class="org.springframework.mail.SimpleMailMessage">
+		<property name="to"
+			value="vishals@mkcl.org" />
+		<property name="from" value="insync@mkcl.org" />
+		<property name="subject" value="ELS: Exception Occured" />
+	</bean>
+
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
+		p:resourceLoaderPath="/WEB-INF/views/templates" />
+		
+	<!-- Imports -->	
+	<import resource="appServlet/security.xml" />
+	
+	<beans profile="qa">
+		<jdbc:embedded-database id="dataSource" type="HSQL">
+		</jdbc:embedded-database>
+	</beans>
+
+	<beans profile="dev">
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${db.driverClassName}" />
+			<property name="jdbcUrl" value="${db.url}" />
+			<property name="user" value="${db.username}" />
+			<property name="password" value="${db.password}" />
+			<property name="idleConnectionTestPeriod" value="540" />
+			<property name="acquireIncrement" value="5" />
+			<property name="initialPoolSize" value="5" />
+			<property name="minPoolSize" value="5" />
+		</bean>
+	</beans>
+	
+	<beans profile="prod">
+		<jee:jndi-lookup id="dataSource" jndi-name="jdbc/igr"/>
+	</beans>
+
+</beans>

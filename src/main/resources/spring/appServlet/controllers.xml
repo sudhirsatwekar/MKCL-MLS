@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd	
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:component-scan base-package="org.mkcl.els" />
+	<!-- Configures Handler Interceptors -->
+	
+	<mvc:interceptors>
+		<!-- Changes the locale when a 'locale' request parameter is sent; e.g. 
+			/?locale=de -->
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+			  <property name="paramName" value="lang" />
+		</bean>
+		<bean class="org.mkcl.els.common.interceptor.ErrorsRedirectInterceptor" />
+		<bean class="org.mkcl.els.common.interceptor.SessionCheckInterceptor">
+			<property name="redirect" value="login.htm"></property>
+		</bean>
+	</mvc:interceptors>
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="en_" />
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- one of the properties available; the maximum file size in bytes -->
+		<property name="maxUploadSize" value="20000000" />
+	</bean>
+	<bean id="contentNegotiatingViewResolver"
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="1" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="htm" value="text/html" />
+				<!-- <entry key="xml" value="application/xml" /> -->
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/views/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<bean class="org.mkcl.els.common.resolvers.NotifyingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.mkcl.els.common.exception.SessionExpiredException">redirect:login</prop>
+			</props>
+		</property>
+		<property name="defaultErrorView" value="errors/general-error" />
+	</bean>
+</beans>
