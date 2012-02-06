@@ -33,6 +33,7 @@ import org.mkcl.els.service.IAssemblyRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -42,7 +43,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class MemberPersonalDetailsController.
@@ -62,6 +64,17 @@ public class MemberPersonalDetailsController {
     private static final String FORM_NAME = "MIS.PERSONAL";
 
     /**
+     * Index.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "member_details/module";
+    }
+    
+    /**
      * String.
      *
      * @param model the model
@@ -70,8 +83,9 @@ public class MemberPersonalDetailsController {
      * @since v1.0.0
      */
     @RequestMapping(value = "list", method = RequestMethod.GET)
-    public String index(final ModelMap model) {
-        Grid grid = Grid.findByName("MEMBER_DETAIL_GRID");
+    public String list(final ModelMap model,
+                       final Locale locale) {
+        Grid grid = Grid.findByName("MEMBER_DETAIL_GRID", locale.toString());
         model.addAttribute("gridId", grid.getId());
         return "member_details/personal/list";
     }
@@ -95,6 +109,9 @@ public class MemberPersonalDetailsController {
         populateModel(model, memberPersonalDetails);
         model.addAttribute(
                 "photoExt", CustomParameter.findByName("PHOTO_EXTENSION")
+                .getValue());
+        model.addAttribute(
+                "dateformat", CustomParameter.findByName("DATEPICKER_DATEFORMAT")
                 .getValue());
         model.addAttribute("photoSize", Long.parseLong(CustomParameter
                 .findByName("PHOTO_SIZE").getValue()) * 1024 * 1024);
@@ -127,24 +144,10 @@ public class MemberPersonalDetailsController {
                 }
             }
             buffer.deleteCharAt(buffer.length() - 1);
-            model.addAttribute(
-                    "constituency", memberPersonalDetails.getConstituency());
             model.addAttribute("district", buffer.toString());
             model.addAttribute("state", state);
         }
         populateModel(model, memberPersonalDetails);
-        model.addAttribute(
-                "photoExt", CustomParameter.findByName("PHOTO_EXTENSION")
-                .getValue());
-        model.addAttribute("photoSize", Long.parseLong(CustomParameter
-                .findByName("PHOTO_SIZE").getValue()) * 1024 * 1024);
-        Document document = Document.findByTag(memberPersonalDetails
-                .getPhoto());
-        if (document != null) {
-            model.addAttribute(
-                    "photoOriginalName", document.getOriginalFileName());
-
-        }
         return "member_details/personal/edit";
     }
 
@@ -167,21 +170,12 @@ public class MemberPersonalDetailsController {
                          final MemberDetails memberPersonalDetails,
                          final BindingResult result,
                          final ModelMap model,
-                         @RequestParam(required = false) final String constituencies,
-                         @RequestParam(required = false) final String district,
-                         @RequestParam(required = false) final String state,
-                         final HttpServletRequest request) {
-        if (constituencies != null || !constituencies.isEmpty()) {
-            memberPersonalDetails.setConstituency(Constituency
-                    .findByName(constituencies));
-        }
+                         final HttpServletRequest request,
+                         final RedirectAttributes redirectAttributes) {
+        toggleMaritalDetails(memberPersonalDetails);
         this.validate(memberPersonalDetails, result);
         if (result.hasErrors()) {
             populateModel(model, memberPersonalDetails);
-            model.addAttribute("district", district);
-            model.addAttribute("state", state);
-            model.addAttribute(
-                    "constituency", memberPersonalDetails.getConstituency());
             model.addAttribute("type", "error");
             model.addAttribute("msg", "create_failed");
             return "member_details/personal/new";
@@ -193,18 +187,19 @@ public class MemberPersonalDetailsController {
             memberPersonalDetails.persist();
         }
         request.getSession().setAttribute("refresh", "");
+        redirectAttributes.addFlashAttribute("type","success");
+        redirectAttributes.addFlashAttribute("msg","create_success");
+        String returnUrl = "redirect:member_personal_details/"
+                                + memberPersonalDetails.getId() + "/edit";
         if (CustomParameter.findByName("MIS_PROGRESSIVE_DISPLAY").getValue()
                 .toLowerCase().equals("progressive")) {
-            return "redirect:/member_contact_details/"
-                    + memberPersonalDetails.getId()
-                    + "/edit?type=success&msg=create_success";
-        } else {
-            return "redirect:member_personal_details/"
-                    + memberPersonalDetails.getId()
-                    + "/edit?type=success&msg=create_success";
-        }
+            returnUrl = "redirect:/member_contact_details/"
+                    + memberPersonalDetails.getId() + "/edit";
+        } 
+        return returnUrl;
     }
 
+    
     /**
      * String.
      *
@@ -220,41 +215,31 @@ public class MemberPersonalDetailsController {
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.PUT)
-    public String edit(final HttpServletRequest request,
+    public String update(final HttpServletRequest request,
                        @Valid @ModelAttribute("memberPersonalDetails")
                        final MemberDetails memberPersonalDetails,
                        final BindingResult result,
                        final ModelMap model,
-                       @RequestParam(required = false) final String constituencies,
-                       @RequestParam(required = false) final String district,
-                       @RequestParam(required = false) final String state) {
-        if (constituencies != null || !constituencies.isEmpty()) {
-            memberPersonalDetails.setConstituency(Constituency
-                    .findByName(constituencies));
-        }
+                       final RedirectAttributes redirectAttributes) {
+        toggleMaritalDetails(memberPersonalDetails);
         this.validate(memberPersonalDetails, result);
         if (result.hasErrors()) {
             populateModel(model, memberPersonalDetails);
-            model.addAttribute("district", district);
-            model.addAttribute("state", state);
-            model.addAttribute(
-                    "constituency", memberPersonalDetails.getConstituency());
             model.addAttribute("type", "error");
             model.addAttribute("msg", "update_failed");
             return "member_details/personal/edit";
         }
         memberPersonalDetails.updateMemberPersonalDetails();
-        request.getSession().setAttribute("refresh", "");
+        redirectAttributes.addFlashAttribute("type","success");
+        redirectAttributes.addFlashAttribute("msg","update_success");
+        String returnUrl = "redirect:member_personal_details/"
+                                + memberPersonalDetails.getId() + "/edit";
         if (CustomParameter.findByName("MIS_PROGRESSIVE_DISPLAY").getValue()
                 .toLowerCase().equals("progressive")) {
-            return "redirect:/member_contact_details/"
-                    + memberPersonalDetails.getId()
-                    + "/edit?type=success&msg=update_success";
-        } else {
-            return "redirect:member_personal_details/"
-                    + memberPersonalDetails.getId()
-                    + "/edit?type=success&msg=update_success";
-        }
+            returnUrl = "redirect:/member_contact_details/"
+                    + memberPersonalDetails.getId() + "/edit";
+        } 
+        return returnUrl;
     }
 
     /**
@@ -274,6 +259,27 @@ public class MemberPersonalDetailsController {
         MemberDetails memberDetails = MemberDetails.findById(id);
         memberDetails.remove();
         return "info";
+    }
+    
+    /**
+     * Delete photo.
+     *
+     * @param id the id
+     * @param model the model
+     * @param request the request
+     * @return the string
+     */
+    @Transactional
+    @RequestMapping(value = "{id}/photo", method = RequestMethod.PUT)
+    public @ResponseBody
+            boolean updatePhoto(@PathVariable final Long id,
+                         final ModelMap model,
+                         final HttpServletRequest request) {
+        MemberDetails memberDetails = MemberDetails.findById(id);
+        if(memberDetails.getPhoto()!=null && !memberDetails.getPhoto().equals("")) {
+            return memberDetails.resetPhoto();
+        }
+        return false;
     }
 
     /**
@@ -334,6 +340,20 @@ public class MemberPersonalDetailsController {
         model.addAttribute("parties", Party.findAllSorted(
                 "name", memberPersonalDetails.getLocale(), false));
         model.addAttribute("memberPersonalDetails", memberPersonalDetails);
+    }
+    
+    /**
+     * Toggle marital details.
+     *
+     * @param memberPersonalDetails the member personal details
+     */
+    private void toggleMaritalDetails(final MemberDetails memberPersonalDetails) {
+        if(!memberPersonalDetails.isMaritalStatus()){
+            memberPersonalDetails.setMarriageDate(null);
+            memberPersonalDetails.setSpouseName(null);
+            memberPersonalDetails.setNoOfSons(null);
+            memberPersonalDetails.setNoOfDaughter(null);
+        }
     }
 
 }

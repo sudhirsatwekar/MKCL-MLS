@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class MemberContactDetailsController.
@@ -70,10 +71,11 @@ public class MemberContactDetailsController {
      * @return the string
      */
     @RequestMapping(method = RequestMethod.PUT)
-    public String edit(
+    public String update(
             @Valid @ModelAttribute("memberContactDetails") final MemberDetails memberContactDetails,
-            final BindingResult result, final ModelMap model, @RequestParam(
-                    required = false) final String state) {
+            final BindingResult result, 
+            final ModelMap model, 
+            final RedirectAttributes redirectAttributes) {
         this.validate(memberContactDetails, result);
         if (result.hasErrors()) {
             populateModel(model, memberContactDetails);
@@ -81,18 +83,18 @@ public class MemberContactDetailsController {
             model.addAttribute("msg", "update_failed");
             return "member_details/contact/edit";
         }
+        
         memberContactDetails.updateMemberContactDetails();
+        redirectAttributes.addFlashAttribute("type","success");
+        redirectAttributes.addFlashAttribute("msg","update_success");
+        String returnUrl = "redirect:member_contact_details/"
+                + memberContactDetails.getId() + "/edit";
         if (CustomParameter.findByName("MIS_PROGRESSIVE_DISPLAY")
                 .getValue().toLowerCase().equals("progressive")) {
-            return "redirect:/member_other_details/"
-                    + memberContactDetails.getId()
-                    + "/edit?type=success&msg=update_success";
-        } else {
-            return "redirect:member_contact_details/"
-                    + memberContactDetails.getId()
-                    + "/edit?type=success&msg=create_success";
-        }
-
+            returnUrl = "redirect:/member_other_details/"
+                    + memberContactDetails.getId() + "/edit";
+        } 
+        return returnUrl;
     }
 
     /**

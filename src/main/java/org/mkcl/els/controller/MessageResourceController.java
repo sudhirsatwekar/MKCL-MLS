@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class MessageResourceController.
@@ -34,6 +35,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/messages")
 public class MessageResourceController extends BaseController {
 
+    /**
+     * Index.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "masters/messages/module";
+    }
+    
     /**
      * Lists all message resources.
      *
@@ -98,7 +110,8 @@ public class MessageResourceController extends BaseController {
     public String create(@Valid @ModelAttribute("messageResource")
                          final MessageResource messageResource,
                          final BindingResult result,
-                         final ModelMap model) {
+                         final ModelMap model,
+                         final RedirectAttributes redirectAttributes) {
         this.validate(messageResource, result);
         if (result.hasErrors()) {
             model.addAttribute("messageResource", messageResource);
@@ -107,8 +120,9 @@ public class MessageResourceController extends BaseController {
             return "masters/messages/new";
         }
         messageResource.persist();
-        return "redirect:messages/" + messageResource.getId()
-                + "/edit?type=success&msg=create_success";
+        redirectAttributes.addFlashAttribute("type","success");
+        redirectAttributes.addFlashAttribute("msg","create_success");
+        return "redirect:messages/" + messageResource.getId() + "/edit";
     }
 
     /**
@@ -125,7 +139,8 @@ public class MessageResourceController extends BaseController {
     public String update(@Valid @ModelAttribute("messageResource")
                          final MessageResource messageResource,
                          final BindingResult result,
-                         final ModelMap model) {
+                         final ModelMap model,
+                         final RedirectAttributes redirectAttributes) {
         this.validate(messageResource, result);
         if (result.hasErrors()) {
             model.addAttribute("messageResource", messageResource);
@@ -134,8 +149,9 @@ public class MessageResourceController extends BaseController {
             return "masters/messages/edit";
         }
         messageResource.update();
-        return "redirect:messages/" + messageResource.getId()
-                + "/edit?type=success&msg=update_success";
+        redirectAttributes.addFlashAttribute("type","success");
+        redirectAttributes.addFlashAttribute("msg","update_success");
+        return "redirect:messages/" + messageResource.getId() + "/edit";
 
     }
 

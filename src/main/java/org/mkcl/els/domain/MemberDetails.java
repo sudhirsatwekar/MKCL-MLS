@@ -11,9 +11,7 @@
 package org.mkcl.els.domain;
 
 import java.io.Serializable;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,7 +19,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -43,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Entity
 @Table(name = "member_details")
-@JsonIgnoreProperties({ "memberPositions", "partyName", "constituency" })
+@JsonIgnoreProperties({ "partyName", "constituency" })
 public class MemberDetails implements Serializable {
 
     // ---------------------------------Attributes-------------------------------------------------
@@ -226,11 +223,9 @@ public class MemberDetails implements Serializable {
     /** The no of terms. */
     private Integer noOfTerms;
 
-    /** The member positions. */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,
-            fetch = FetchType.LAZY)
-    private List<MemberPositionsDetails> memberPositions;
-
+    @Column(length = 10000)
+    private String positionDetails;
+    
     /** The socio cultural activities. */
     @Column(length = 10000)
     private String socioCulturalActivities;
@@ -393,7 +388,7 @@ public class MemberDetails implements Serializable {
             final String permanentFax,
             final String permanentMobile,
             final Integer noOfTerms,
-            final List<MemberPositionsDetails> memberPositions,
+            final String positionDetails,
             final String socioCulturalActivities,
             final String literaryArtisticScAccomplishment,
             final String booksPublished,
@@ -450,7 +445,7 @@ public class MemberDetails implements Serializable {
         this.permanentFax = permanentFax;
         this.permanentMobile = permanentMobile;
         this.noOfTerms = noOfTerms;
-        this.memberPositions = memberPositions;
+        this.positionDetails = positionDetails;
         this.socioCulturalActivities = socioCulturalActivities;
         this.literaryArtisticScAccomplishment = literaryArtisticScAccomplishment;
         this.booksPublished = booksPublished;
@@ -731,7 +726,7 @@ public class MemberDetails implements Serializable {
         memberDetailsRepository.remove(this);
         memberDetailsRepository.flush();
     }
-
+    
     /**
      * Check version.
      *
@@ -744,6 +739,18 @@ public class MemberDetails implements Serializable {
         final MemberDetails memberDetails = memberDetailsRepository
                 .find(this.id);
         return memberDetails.getVersion().equals(this.version);
+    }
+    
+    /**
+     * Reset photo.
+     *
+     * @return true, if successful
+     */
+    @Transactional
+    public boolean resetPhoto() {
+        this.setPhoto(null);
+        this.update();
+        return true;
     }
 
     // ------------------------------------------Getters/Setters-----------------------------------
@@ -1775,20 +1782,20 @@ public class MemberDetails implements Serializable {
     }
 
     /**
-     * Gets the member positions.
+     * Gets the member position details.
      *
      * @return the member positions
      */
-    public List<MemberPositionsDetails> getMemberPositions() {
-        return memberPositions;
+    public String getPositionDetails() {
+        return positionDetails;
     }
 
     /**
-     * Sets the member positions.
+     * Sets the member position details.
      *
      * @param memberPositions the new member positions
      */
-    public void setMemberPositions(final List<MemberPositionsDetails> memberPositions) {
-        this.memberPositions = memberPositions;
+    public void setMemberPositions(final String positionDetails) {
+        this.positionDetails = positionDetails;
     }
 }

@@ -116,6 +116,20 @@ public class BaseRepository<T, ID extends Serializable> extends
      * @since v1.0.0
      */
     @SuppressWarnings("unchecked")
+    public T findByName(final String name,
+                        final String locale) {
+        final Search search = new Search();
+        search.addFilterEqual("name", name).addFilterEqual("locale", locale);
+        final T t = (T) this.searchUnique(search);
+        return t;
+    }
+    
+    /**
+     * Find by name.
+     *
+     * @param name the name
+     * @return the t
+     */
     public T findByName(final String name) {
         final Search search = new Search();
         search.addFilterEqual("name", name);

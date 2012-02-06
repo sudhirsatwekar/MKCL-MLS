@@ -21,9 +21,6 @@ POSSIBILITY OF SUCH DAMAGE.
  */
 package org.mkcl.els.common.vo;
 
-import java.util.List;
-
-import org.mkcl.els.domain.MemberPositionsDetails;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,8 +49,10 @@ public class MemberBiographyVO {
 	/** The last name. */
 	private String lastName;
 	
+	/** The enable aliasing. */
 	private boolean enableAliasing;
 	
+	/** The alias. */
 	private String alias;
 	
 	/** The gender. */
@@ -162,7 +161,7 @@ public class MemberBiographyVO {
 	private Integer noOfTerms;	
 	
 	/** The member positions. */
-	private List<MemberPositionsDetails> memberPositions;
+	private String positionDetails;
 	
 	/** The socio cultural activities. */
 	private String socioCulturalActivities;
@@ -170,6 +169,7 @@ public class MemberBiographyVO {
 	/** The literary artistic sc accomplishment. */
 	private String literaryArtisticScAccomplishment;
 	
+	/** The books published. */
 	private String booksPublished;
 	
 	/** The special interests. */
@@ -529,15 +529,15 @@ public class MemberBiographyVO {
 		this.noOfTerms = noOfTerms;
 	}
 
-	public List<MemberPositionsDetails> getMemberPositions() {
-		return memberPositions;
-	}
+	public String getPositionDetails() {
+        return positionDetails;
+    }
 
-	public void setMemberPositions(List<MemberPositionsDetails> memberPositions) {
-		this.memberPositions = memberPositions;
-	}
+    public void setPositionDetails(String positionDetails) {
+        this.positionDetails = positionDetails;
+    }
 
-	public String getSocioCulturalActivities() {
+    public String getSocioCulturalActivities() {
 		return socioCulturalActivities;
 	}
 

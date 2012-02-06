@@ -56,7 +56,7 @@ public class MemberInfo {
 	
 	private Integer noOfTerms;
 	
-	private Date birthDate;
+	private String birthDate;
 
 	/**
 	 * Instantiates a new member info.
@@ -67,7 +67,7 @@ public class MemberInfo {
 
 	public MemberInfo(Long id, String firstName, String middleName,
 			String lastName, String constituency, String party, String gender,
-			boolean maritalStatus, Integer noOfTerms, Date birthDate) {
+			boolean maritalStatus, Integer noOfTerms, String birthDate) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -153,11 +153,11 @@ public class MemberInfo {
 		this.noOfTerms = noOfTerms;
 	}
 
-	public Date getBirthDate() {
+	public String getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(Date birthDate) {
+	public void setBirthDate(String birthDate) {
 		this.birthDate = birthDate;
 	}
 

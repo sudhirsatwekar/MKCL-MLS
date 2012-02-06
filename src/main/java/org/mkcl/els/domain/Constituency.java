@@ -310,6 +310,14 @@ public class Constituency implements Serializable {
     public boolean checkVersion() {
         return Constituency.findById(this.id).getVersion() == this.version;
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 
     // ------------------------------------------Getters/Setters-----------------------------------
     /**

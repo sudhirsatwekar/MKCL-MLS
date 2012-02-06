@@ -59,7 +59,7 @@ public class FileController {
      * @since v1.0.0
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String create(@RequestParam final MultipartFile file,
+    public String create(@RequestParam(required=false) final MultipartFile file,
                          final ModelMap modelMap,
                          final HttpServletRequest request,
                          final HttpServletResponse response) throws IOException {
@@ -113,6 +113,24 @@ public class FileController {
         } catch (IOException e) {
             logger.error("Error occured while downloading file:" + e.toString());
         }
+    }
+    
+    /**
+     * Gets the document info.
+     *
+     * @param tag the tag
+     * @param modelMap the model map
+     * @param request the request
+     * @param response the response
+     * @return the document info
+     */
+    @RequestMapping(value="{tag}/info", method = RequestMethod.GET)
+    public @ResponseBody String getDocumentInfo(@PathVariable final String tag,
+                    final ModelMap modelMap,
+                    final HttpServletRequest request,
+                    final HttpServletResponse response) {
+        Document document = Document.findByTag(tag);
+        return document.getTag();
     }
 
 

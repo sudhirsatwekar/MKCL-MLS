@@ -96,6 +96,10 @@ public class Grid implements Serializable {
 
     /** The Localized. */
     private Boolean localized;
+    
+    /** The locale. */
+    @Column(length = 200)
+    private String locale;
 
     /** The version. */
     @Version
@@ -194,13 +198,26 @@ public class Grid implements Serializable {
        * Find by name.
        *
        * @param name the name
+       * @param locale the locale
        * @return the grid
        * @author nileshp
        * @since v1.0.0
        */
       @Transactional(readOnly = true)
+      public static Grid findByName(final String name, 
+                                    final String locale) {
+          return getGridRepository().findByName(name, locale);
+      }
+      
+      /**
+       * Find by name.
+       *
+       * @param name the name
+       * @return the grid
+       */
+      @Transactional(readOnly = true)
       public static Grid findByName(final String name) {
-          return getGridRepository().findByName(name);
+          return getGridRepository().findByName(name, "en");
       }
 
       /**
@@ -643,12 +660,14 @@ public class Grid implements Serializable {
         this.nativeQuery = nativeQuery;
     }
 
-    /**
-     * Gets the serialversionuid.
-     *
-     * @return the serialversionuid
-     */
-    public static long getSerialversionuid() {
-        return serialVersionUID;
+    
+    
+    public String getLocale() {
+        return locale;
+    }
+    
+    
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }

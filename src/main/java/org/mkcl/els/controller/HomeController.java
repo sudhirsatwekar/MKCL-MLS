@@ -99,7 +99,7 @@ public class HomeController extends BaseController {
         model.addAttribute(
                 "timeFormat",
                 CustomParameter.findByName("DATEPICKER_TIMEFORMAT").getValue());
-        return "home2";
+        return "home";
     }
 
 }

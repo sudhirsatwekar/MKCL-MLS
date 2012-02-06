@@ -54,7 +54,7 @@ public class Document implements Serializable {
     private String tag;
 
     /** The type. */
-    @Column(length = 30)
+    @Column(length = 500)
     private String type;
 
     /** The original file name. */
