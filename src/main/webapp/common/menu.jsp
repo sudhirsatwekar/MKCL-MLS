@@ -18,9 +18,9 @@
 	        $('.menu_link').click(function(){
 		        if(this.href.indexOf("home")==-1){
 		           $("#alertmod").remove();//this is done as fix to jqgrid warning box that shows up at bottom of the page 
-			       $("#navContent").load(this.href,function(data){
+			       $('.content').load(this.href,function(data){
 			    	   var title = $(data).filter('title').text();
-						$('#navigation > .subHeader > div').html(title);
+						$('#module_title').html(title);
 			       });
 		        }
 		        return false;

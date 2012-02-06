@@ -1,6 +1,29 @@
 /*Common javascript functions to be used across jsp files */
+function _ajax_request(url, data, callback, type, method) {
+    if (jQuery.isFunction(data)) {
+        callback = data;
+        data = {};
+    }
+    return jQuery.ajax({
+        type: method,
+        url: url,
+        data: data,
+        success: callback,
+        dataType: type
+        });
+}
+
+jQuery.extend({
+    put: function(url, data, callback, type) {
+        return _ajax_request(url, data, callback, type, 'PUT');
+    },
+    delete_: function(url, data, callback, type) {
+        return _ajax_request(url, data, callback, type, 'DELETE');
+    }
+});
+
 function initControls(){
-	$('select[multiple="multiple"]').sexyselect({width:250,showTitle: false, selectionMode: 'multiple', styleize: true});
+	/*$('select[multiple="multiple"]').sexyselect({width:250,showTitle: false, selectionMode: 'multiple', styleize: true});
 	$("input[class^='numeric']").autoNumeric();
 	$("input[class^='integer']").autoNumeric({mDec: 0});
 	$('.autosuggest').each(function(){
@@ -10,13 +33,34 @@ function initControls(){
 			onSelect:autosuggest_onchange
 		});
 	});	
-	$('#dateformat').val();
+	$('#dateformat').val();*/
 	$("input[class^='date']").datepicker({changeMonth: true, changeYear: true, dateFormat: $('#dateformat').val(), yearRange: 'c-75:c+20'});
-
+	$(':input:visible:not([readonly]):first').focus();
 };
 function resize_grid(){
 	$('#grid').fluidGrid({base:'#grid_container', offset:-0});
 	$("#grid").jqGrid('setGridHeight', $('#navigation').innerHeight()-103);
+}
+function scrollRowsInGrid(e) {
+	var gridArr = $('#grid').getDataIDs();
+    var selrow = $('#grid').getGridParam("selrow");
+    var curr_index = 0;
+    for(var i = 0; i < gridArr.length; i++)
+    {
+        if(gridArr[i]==selrow)
+            curr_index = i;
+    }
+
+    if(e.keyCode == 38) //up
+    {
+        if((curr_index-1)>=0)
+            $('#grid').resetSelection().setSelection(gridArr[curr_index-1],true);
+    }
+    if(e.keyCode == 40) //down
+    {
+        if((curr_index+1)<gridArr.length)
+            $('#grid').resetSelection().setSelection(gridArr[curr_index+1],true);
+    }
 }
 function loadGrid(gridId, baseFilter) {
 	var c_grid = null;
@@ -25,7 +69,7 @@ function loadGrid(gridId, baseFilter) {
 			scroll:1,
 			altRows:true,
 			autowidth:true,
-			shrinkToFit:true,
+			height:'400px',
 			ajaxGridOptions:{async:false},
 			url:'grid/data/'+ gridId +'.json',
 			datatype: 'json',
@@ -43,65 +87,82 @@ function loadGrid(gridId, baseFilter) {
 			postData: {
 				"baseFilters": baseFilter
 			},
-			loadComplete:function(data,obj){
-				//$("#grid").jqGrid('setGridHeight', $('#navigation').innerHeight()-103);
-				if($('#refresh').val()=="refresh"){
+			loadComplete: function(data, obj) {
+				var curr_page = $(this).getGridParam('page');
+				console.log(curr_page);
+				if(curr_page==1) {
 					var top_rowid = $('#grid tbody:first-child tr:nth-child(2)').attr('id');
-					if(!top_rowid){
-						$('#contentPanel').load(grid.detailView +'/new',function(data){
-			                var title = $(data).filter('title').text();
-							$('#content > .subHeader > div').html(title);
-						});
-					}
-					else{
-						$('#contentPanel').load(grid.detailView + '/' + top_rowid+'/edit',function(data){
-							var title = $(data).filter('title').text();
-							$('#content > .subHeader > div').html(title);
-
-						});
-					}	
-				}								
+					$(this).setSelection(top_rowid, true);
+				}
 			},
-			onSelectRow:function() {
-				if(!$(this).getGridParam("multiselect")){
-					$('#contentPanel').empty();				
-					var row = $("#grid").jqGrid('getGridParam','selrow');				
-					$('#contentPanel').load(grid.detailView + '/' + row+'/edit',function(data){
-						var title = $(data).filter('title').text();
-						$('#content > .subHeader > div').html(title);
-					});	
-				}							
-			}
+			onSelectRow: function(rowid,status) {
+				if($('#key')){
+					$('#key').val(rowid);
+				}
+		    	if(typeof window.rowSelectHandler == 'function'){
+					rowSelectHandler(rowid,status);			    			
+		    	}
+		    },
+		    ondblClickRow: function(rowid,
+		    		iRow,
+		    		iCol,
+		    		e) {
+		    	if(typeof window.rowDblClickHandler == 'function'){
+		    		rowDblClickHandler(rowid, iRow, iCol, e);			    			
+		    	}
+		    }
 		});
-		$("#grid").jqGrid('navGrid','#grid_pager',{edit:false,add:false,del:false, search:true},{},{},{},{multipleSearch:true});
 		$("#grid").jqGrid('bindKeys');
 		$("#showhide_columns").click(function(){
 			$("#grid").setColumns({caption:"Check/Uncheck columns to Show/Hide"});
 			return false;
 		});		
-		$("#new_record").click(function(){
-			var url = $(this).attr('href');
-			$('.contentPanel').load(url,function(data){
-                var title = $(data).filter('title').text();
-				$('#content > .subHeader > div').html(title);
-			});
-   			return false;
-		});
-		$("#delete_record").click(function() {
-			var row = $("#grid").jqGrid('getGridParam','selrow'); 
-			if(row==null){
-				alert("Please select the desired row to delete");		
-			}
-			else{
-				var url = $(this).attr('href');
-				$("#grid").jqGrid('delGridRow',row,{reloadAfterSubmit:true, mtype:'DELETE', url:url+'/'+row+'/delete',modal:true});
-				
-			}
-			return false;
-		});
 	}});
 	return c_grid;
 };
+
+function showTabById(id) {
+	$('a').removeClass('selected');
+	$('#'+ id).addClass('selected');
+	$('.tabContent').load($('#'+ id).attr('href'));
+};
+
+function showTabByIdAndUrl(id, url) {
+	$('a').removeClass('selected');
+	$('#'+ id).addClass('selected');
+	$('.tabContent').load(url);
+};
+
+function loadDistrictsByStateId(id,type){
+	$.ajax({
+		url:'ref/'+id+'/districts',
+		datatype:'json',
+		success:function(data){
+			$('#'+type+'Districts option').remove();
+			if(data.length>=1){
+				for(var i=0;i<data.length;i++){
+					$('#'+type+'Districts').append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+				}
+				loadTehsilsByDistrictId(data[0].id,type);							
+			}else{
+				$('#'+type+'tehsils option').remove();
+			}					
+	}							
+	});
+}
+
+function loadTehsilsByDistrictId(id,type){
+	$.ajax({
+		url:'ref/'+id+'/tehsils',
+		datatype:'json',
+		success:function(data){
+		$('#'+type+'Tehsils option').remove();
+			for(var i=0;i<data.length;i++){
+			$('#'+type+'Tehsils').append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+		}
+	}							
+	});
+}
 
 /*Code for uploading files*/
 function unUploadify(element){

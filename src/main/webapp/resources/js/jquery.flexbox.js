@@ -802,8 +802,8 @@
         allowInput: true, // set to false to disallow the user from typing in queries
         containerClass: 'ffb',
         contentClass: 'dd-content',
-        selectClass: 'ffb-sel',
-        inputClass: 'ffb-input',
+        selectClass: 'sSelect ffb-sel',
+        inputClass: 'sText ffb-input',
         arrowClass: 'ffb-arrow',
         matchClass: 'ffb-match',
         noResultsText: 'No matching results', // text to show when no results match the query

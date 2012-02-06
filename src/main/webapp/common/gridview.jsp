@@ -4,10 +4,8 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			var gridId = $('#grid_id').val();
-		    loadGrid(gridId);
-		    //resize_grid();
+		    var grid = loadGrid(gridId);
 		});
-		//$(window).resize(resize_grid);
 	</script>
 </head>
 <body>

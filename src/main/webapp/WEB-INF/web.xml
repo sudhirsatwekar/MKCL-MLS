@@ -46,6 +46,15 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+
+	<servlet>
+		<servlet-name>fileupload</servlet-name>
+		<servlet-class>org.mkcl.els.common.interceptor.FileUpload</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileupload</servlet-name>
+		<url-pattern>/fileupload</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>

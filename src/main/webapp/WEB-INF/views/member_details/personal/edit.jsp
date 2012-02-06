@@ -5,386 +5,248 @@
 	<spring:message code="member_information_system" text="Member Information System"/>
 	</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>	
-</head>
-<body>
-<div class="commandbar">
-		<div class="commandbarContent">
-			<a  href="#" class="mis" id="member_personal_details"><spring:message code="mis.personal.new.link" text="Personal Details"/></a> |
-			<a  href="#" class="mis" id="member_contact_details"><spring:message code="mis.contact.new.link" text="Contact Details"/></a> |
-			<a  href="#" class="mis" id="member_other_details"><spring:message code="mis.other.new.link" text="Other Details"/></a>
-		</div>
-</div>
-<form:form  action="member_personal_details" method="PUT" modelAttribute="memberPersonalDetails">
-	<div class="info">
-		 <h2><spring:message code="member_personal_details.edit.heading" text="Edit Personal Details"/></h2>		
-		<div style="background-color:#C1CDCD; ;padding: 3px"><spring:message code="generic.mandatory.label" text="All fields marked * are mandatory"/></div>
-	</div>
-	<ul>	
-		<li id="${fields.id.position}" class="${fields.id.visible}">
-		<label class="desc"><spring:message code="generic.id" text="Id"/><span><spring:message code="${fields.id.hint}" text=""/></span>&nbsp;<c:if test="${fields.id.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="field text medium" path="id" readonly="true" /> 
-			</div>
-		</li>
-					
-		<li id="${fields.locale.position}" class="${fields.locale.visible}">
-		<label class="desc" style="display: "><spring:message code="generic.locale" text="Select Language"/><span><spring:message code="${fields.locale.hint}" text=""/></span>&nbsp;<c:if test="${fields.locale.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:select cssClass="field select medium" path="locale"> 
-					<form:option value="en"><spring:message code="generic.lang.english" text="English"/></form:option>
-					<form:option value="hi_IN"><spring:message code="generic.lang.hindi" text="Hindi"/></form:option>
-					<form:option value="mr_IN"><spring:message code="generic.lang.marathi" text="Marathi"/></form:option>
-				</form:select>
-			</div>
-		</li>
-			
-		 <li id="${fields.photoField.position}" class="${fields.photoField.visible}" >
-		 <div>
-		 	 <label><spring:message code="member_personal_details.photo.label" text="Upload Photo"/><span><spring:message code="${fields.photoField.hint}" text=""/></span>&nbsp;<c:if test="${fields.photoField.mandatory=='MANDATORY'}">*</c:if></label>	
-		 	 <div class="hideDiv" id="photoDiv">
-		     <img width="80" height="90" id="photoDisplay"/>
-		     </div>
-		     <div >
-			 <input id="photo" readonly="readonly" type="text" value="${photoOriginalName}">
-			 <button id="photoRemove" class="btTxt" type="button"><spring:message code="generic.remove" text="Remove Photo"/></button>
-			 </div>
-			 <form:hidden path="photo" id="photoField" cssClass="${fields.photoField.mandatory}"></form:hidden>
-			 <form:errors path="photo" cssClass="field_error" />
-		 </div>	
-		 </li>
-		 	
-		<li  class="name ${fields.title.visible}" id="${fields.title.position}">
-		<label class="desc"><spring:message code="member_personal_details.name" text="Name"/><span><spring:message code="${fields.title.hint}" text=""/></span>&nbsp;<c:if test="${fields.title.mandatory=='MANDATORY'}">*</c:if></label>		
-		<span>
-		<label><spring:message code="member_personal_details.title" text="Title"/><span><spring:message code="${fields.title.hint}" text=""/></span>&nbsp;<c:if test="${fields.title.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:select cssClass="field select ${fields.title.mandatory}" path="title" items="${titles}" itemValue="id" itemLabel="name" /><form:errors path="title" cssClass="field_error" />	
-		</span>
-		<span>
-		<label><spring:message code="member_personal_details.firstName" text="First Name"/><span><spring:message code="${fields.firstName.hint}" text=""/></span>&nbsp;<c:if test="${fields.firstName.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:input cssClass="field text ${fields.firstName.mandatory}" path="firstName"/><form:errors path="firstName" cssClass="field_error" id="firstNameError" /><span id="firstNameError"></span>
-		</span>
-		<span>
-		<label><spring:message code="member_personal_details.middleName" text="Middle Name"/><span><spring:message code="${fields.middleName.hint}" text=""/></span>&nbsp;<c:if test="${fields.middleName.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:input cssClass="field text ${fields.middleName.mandatory}" path="middleName"/><form:errors path="middleName" cssClass="field_error" /><span id="middleNameError"></span>	
-		</span>
-		<span>
-		<label><spring:message code="member_personal_details.lastName" text="Last Name"/><span><spring:message code="${fields.lastName.hint}" text=""/></span>&nbsp;<c:if test="${fields.lastName.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:input cssClass="field text ${fields.lastName.mandatory}" path="lastName"/><form:errors path="lastName" cssClass="field_error" /><span id="lastNameError"></span>	
-		</span>
-		</li>
-		
-		<li  class="name ${fields.alias.visible}" id="${fields.alias.position}">
-		<label class="desc"><spring:message code="member_personal_details.alias" text="Member's Alias"/><span><spring:message code="${fields.alias.hint}" text=""/></span>&nbsp;<c:if test="${fields.title.mandatory=='MANDATORY'}">*</c:if></label>		
-		<span>
-		<label><spring:message code="member_personal_details.alias" text="Alias"/><span><spring:message code="${fields.alias.hint}" text=""/></span>&nbsp;<c:if test="${fields.alias.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:input cssClass="field text ${fields.alias.mandatory}" path="alias" size="25"/><form:errors path="alias" cssClass="field_error" /><span id="aliasError"></span>	
-		</span>
-		<span>
-		<label><spring:message code="member_personal_details.aliasenabled" text="Alias Enabled?"/><span><spring:message code="${fields.enableAliasing.hint}" text=""/></span>&nbsp;<c:if test="${fields.enableAliasing.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:checkbox cssClass="field text ${fields.enableAliasing.mandatory}" path="enableAliasing" value="true" id="enableAliasing"/><form:errors path="enableAliasing" cssClass="field_error" /><span id="enableAliasingError"></span>
-		</span>
-		</li>
-		
-		<li id="${fields.gender.position}" class="${fields.gender.visible}">
-		<label class="desc"><spring:message code="member_personal_details.gender" text="Gender"/><span><spring:message code="${fields.gender.hint}" text=""/></span>&nbsp;<c:if test="${fields.gender.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:select path="gender" cssClass="field select medium ${fields.partyName.mandatory}">
-				<form:option value="male">Male</form:option>
-				<form:option value="male">Female</form:option>				
-	            </form:select><form:errors path="gender" cssClass="field_error"/>		
-		   </div>
-		</li>
-			
-		<li id="${fields.constituencies.position}" class="${fields.constituencies.visible}">
-		<label class="desc"><spring:message code="member_personal_details.constituency" text="Constituency"/><span><spring:message code="${fields.constituencies.hint}" text=""/></span>&nbsp;<c:if test="${fields.constituencies.mandatory=='MANDATORY'}">*</c:if></label>
-		<div  id="constituencies" url="ref/constituencies"></div>
-		</li>	
-			
-		<li id="${fields.district.position}" class="${fields.district.visible}"  >
-		<div>
-		<span class="left districts">
-		<label class="desc"><spring:message code="member_personal_details.district" text="District"/><span><spring:message code="${fields.district.hint}" text=""/></span>&nbsp;<c:if test="${fields.district.mandatory=='MANDATORY'}">*</c:if></label>
-		<input name="district" id="district" class="field text medium ${fields.district.mandatory}" type="text" value="${district}">
-		</span>	
-		<span class="right states">
-		<label class="desc"><spring:message code="member_personal_details.state" text="State"/><span><spring:message code="${fields.state.hint}" text=""/></span>&nbsp;<c:if test="${fields.state.mandatory=='MANDATORY'}">*</c:if></label>
-		<input type="text" name="state" id="state" class="field text medium ${fields.district.mandatory}" value="${state}">
-		</span>						
-		</div>
-		</li>
-		
-		<li id="${fields.partyName.position}" class="${fields.partyName.visible}">
-		<label class="desc"><spring:message code="member_personal_details.party" text="Party Name"/><span><spring:message code="${fields.partyName.hint}" text=""/></span>&nbsp;<c:if test="${fields.partyName.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:select path="partyName" items="${parties}" itemValue="id" itemLabel="name" cssClass="field select medium ${fields.partyName.mandatory}">
-	            </form:select><form:errors path="partyName" cssClass="field_error" />		
-		   </div>
-		</li>
-		
-		<li class="complex ${fields.fatherName.visible}" id="${fields.fatherName.position}">
-		<div>
-		<span class="left">
-		<label class="desc"><spring:message code="member_personal_details.fatherName" text="Father's Name"/><span><spring:message code="${fields.fatherName.hint}" text=""/></span>&nbsp;<c:if test="${fields.fatherName.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:input cssClass="field text ${fields.fatherName.mandatory}" path="fatherName"/><form:errors path="fatherName" cssClass="field_error" />	
-		</span>
-		<span class="right">
-		<label class="desc"><spring:message code="member_personal_details.motherName" text="Mother's Name"/><span><spring:message code="${fields.motherName.hint}" text=""/></span>&nbsp;<c:if test="${fields.motherName.mandatory=='MANDATORY'}">*</c:if></label>
-		<form:input cssClass="field text ${fields.motherName.mandatory}" path="motherName"/><form:errors path="motherName" cssClass="field_error" />	
-		</span>
-		</div>
-		</li>
-		
-		<li id="${fields.birthDate.position}" class="${fields.birthDate.visible}">	
-		<label class="desc"><spring:message code="member_personal_details.birthDate" text="Date of Birth"/><span><spring:message code="${fields.birthDate.hint}" text=""/></span>&nbsp;<c:if test="${fields.placeOfBirth.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="date ${fields.birthDate.mandatory}" path="birthDate"/><form:errors path="birthDate" cssClass="field_error" />	
-			</div>
-		</li>
-		
-		<li id="${fields.placeOfBirth.position}" class="${fields.placeOfBirth.visible}">	
-		<label class="desc"><spring:message code="member_personal_details.placeOfBirth" text="Place of Birth"/><span><spring:message code="${fields.placeOfBirth.hint}" text=""/></span>&nbsp;<c:if test="${fields.placeOfBirth.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="date ${fields.placeOfBirth.mandatory}" path="placeOfBirth"/><form:errors path="placeOfBirth" cssClass="field_error" />	
-			</div>
-		</li>
-		
-		<li id="${fields.maritalStatus.position}" class="${fields.maritalStatus.visible}">
-		<label class="desc"><spring:message code="member_personal_details.maritalStatus" text="Marital Status"/><span><spring:message code="${fields.maritalStatus.hint}" text=""/></span>&nbsp;<c:if test="${fields.maritalStatus.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:checkbox cssClass="checkbox ${fields.maritalStatus.mandatory}" path="maritalStatus" value="true" id="maritalStatus"/><form:errors path="maritalStatus" cssClass="field_error" />	
-			</div>
-		</li>
-		
-		
-		<li class="date ${fields.marriageDate.visible}" id="${fields.marriageDate.position}">
-		<div class="marriage">				
-		<label class="desc"><spring:message code="member_personal_details.marriageDate" text="Date of Marriage"/><span><spring:message code="${fields.marriageDate.hint}" text=""/></span>&nbsp;<c:if test="${fields.marriageDate.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="date ${fields.marriageDate.mandatory}" path="marriageDate"/><form:errors path="marriageDate" cssClass="field_error" />	
-			</div>
-		</div>
-		</li>
-		
-		<li id="${fields.spouseName.position}" class="${fields.spouseName.visible}">
-		<div class="marriage">				
-		<label class="desc"><spring:message code="member_personal_details.spouseName" text="Spouse's Name"/><span><spring:message code="${fields.spouseName.hint}" text=""/></span>&nbsp;<c:if test="${fields.spouseName.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="field text medium ${fields.spouseName.mandatory}" path="spouseName" size="200"/><form:errors path="spouseName" cssClass="field_error" />	
-			</div>
-		</div>
-		</li>
-		
-		<li id="${fields.noOfSons.position}" class="${fields.noOfSons.visible}">
-		<div class="marriage">		
-		<label class="desc"><spring:message code="member_personal_details.noOfSons" text="No. of Sons"/><span><spring:message code="${fields.noOfSons.hint}" text=""/></span>&nbsp;<c:if test="${fields.noOfSons.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="integer field text medium ${fields.noOfSons.mandatory}" path="noOfSons" size="200"/><form:errors path="noOfSons" cssClass="field_error" />	
-			</div>
-		</div>		
-		</li>
-		
-		<li id="${fields.noOfDaughter.position}" class="${fields.noOfDaughter.visible}">
-		<div class="marriage">				
-		<label class="desc"><spring:message code="member_personal_details.noOfDaughter" text="No. of Daughter"/><span><spring:message code="${fields.noOfDaughter.hint}" text=""/></span>&nbsp;<c:if test="${fields.noOfDaughter.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:input cssClass="integer field text medium ${fields.noOfDaughter.mandatory}" path="noOfDaughter" size="200"/><form:errors path="noOfDaughter" cssClass="field_error" />	
-			</div>	
-		</div>						
-		</li>			
-	
-		<li id="${fields.educationalQualification.position}" class="${fields.educationalQualification.visible}">
-		<label class="desc"><spring:message code="member_personal_details.educationalQualification" text="Educational Qualification"/><span><spring:message code="${fields.educationalQualification.hint}" text=""/></span>&nbsp;<c:if test="${fields.educationalQualification.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:textarea cssClass="field textarea medium ${fields.educationalQualification.mandatory}" path="educationalQualification" rows="5" cols="50"/><form:errors path="educationalQualification" cssClass="field_error" />	
-			</div>
-		</li>
-		
-		<li id="${fields.profession.position}" class="${fields.profession.visible}">
-		<label class="desc"><spring:message code="member_personal_details.profession" text="Profession"/><span><spring:message code="${fields.profession.hint}" text=""/></span>&nbsp;<c:if test="${fields.profession.mandatory=='MANDATORY'}">*</c:if></label>
-			<div>
-				<form:textarea cssClass="field textarea medium ${fields.profession.mandatory}" path="profession" rows="5" cols="50"/><form:errors path="profession" cssClass="field_error" />	
-			</div>
-		</li>		
-	</ul>
-	<input id="saveForm" class="btTxt" type="submit" value="<spring:message code='generic.edit.submit' text='Update'/>" />
-	<form:hidden path="version"/>
-</form:form>
-<div id="info" style="visibility: hidden;">
-	<c:choose>
-	<c:when test="${(!empty type) && (!empty msg)}">
-	<input id="info_type" type="text"  value="${type}">
-	<input id="info_msg" type="hidden" value="<spring:message code='${msg}'/>">
-	</c:when>
-	<c:when test="${(!empty param.type) && (!empty param.msg)}">
-	<input id="info_type" type="hidden"  value="${param.type}">
-	<input id="info_msg" type="hidden" value="<spring:message code='${param.msg}'/>">
-	</c:when>
-	<c:otherwise>
-	<input id="info_type"  type="text" value="">
-	<input id="info_msg" type="hidden" value="">
-	</c:otherwise>
-	</c:choose>	
-	</div>	
-	<input type="hidden" id="refreshSe" value="<%=session.getAttribute("refresh")%>">		
-	<input type="hidden" id="const_name" value="${constituency.name}">
-	<input type="hidden" id="const_id" value="${constituency.id}">	
-	<input type="hidden" id="photo_size" value="${photoSize}">	
-	<input type="hidden" id="photo_ext" value="${photoExt}">			
-<script type="text/javascript">
-	$('document').ready(function(){		
-			/*
-			*Marriage show,hide
-			*/	
-			if($('#maritalStatus').attr("checked")=="checked"){
-			$('.marriage').show();
-			}
-			else{
-			$('.marriage').hide();			
-			};			
-			$('#maritalStatus').change(function(){
-			if($('#maritalStatus').attr("checked")=="checked"){
-				$('.marriage').show();
-			}
-			else{
-				$('.marriage').hide();			
-			}
-			});
-			/*
-			*Constituency
-			*/	
-			function autosuggest_onchange(){
-				var constituencyName=$('input[name=constituencies]').val();
+	<script type="text/javascript">
+	$('document').ready(function(){	
+		initControls();
+		$('#key').val($('#id').val());
+		$("#constituency").autocomplete({
+			source: function( request, response ) {
 				$.ajax({
-					url:'ref/data/'+constituencyName+'/districts',
-					datatype:'json',
-					success:function(data){
-						if(data.length>=1){
-							var districts=data[0].name;
-							for(var i=1;i<data.length;i++){
-								if(data[i].name!=undefined){
-									districts=districts+","+data[i].name;
-								}
+					url: "ref/constituencies",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						q: request.term
+					},
+					success: function( data ) {
+						response( $.map(data.results, function( item ) {
+							return {
+								label: item.name,
+								value: item.id
 							}
-							$('#district').val(districts);
-							$('.districts').show();	
-							$('#state').val(data[0].state.name);
-							$('.states').show();
-						}				
-				}							
+						}));
+					}
 				});
-			};
-			var constFlexBox=$('#constituencies').flexbox($('#constituencies').attr('url'), {  
-				paging: false,  
-				maxVisibleRows: 20,
-				onSelect:autosuggest_onchange
-			});
-			if($('#const_name').val()!=undefined&&$('#const_id').val()!=undefined){
-				constFlexBox.setValue($('#const_name').val());	
-				$('.states').show();
-				$('.districts').show();		
-			}
-			if($('#const_name').val()!=""&&$('#const_id').val()!=""){
-				constFlexBox.setValue($('#const_name').val());	
-				$('.states').show();
-				$('.districts').show();		
-			}
-			else{
-				$('.states').hide();
-				$('.districts').hide();
-			}			
-			
-			/*
-			*Photo Upload
-			*/	
-			if($('#photo').val()==''){
-				uploadify('#photo',$('#photo_ext').val(),$('#photo_size').val());
-	   		}else if(($('#photo').val()!='') && ($('#photo').val()!=undefined))
-	   		{
-	   		$('#photoDisplay').attr('src','/els/file/photo/'+$('#photoField').val());
-		   	$('#photoDiv').removeClass('hideDiv').addClass('showDiv');
-	   		}
-			$('#photoRemove').click(function(){
-				$.ajax({
-				    type: "DELETE",
-				    url: "file/remove/"+$('#photoField').val(),
-				    contentType: "application/json; charset=utf-8",
-				    dataType: "json",
-				    success: function(json) {
-				        if(json==true){
-				        	$('#photo').val('');
-							uploadify('#photo',$('#photo_ext').val(),$('#photo_size').val());
-	   				        alert('File successfully deleted');
-				        }
-				    },
-				    error: function (xhr, textStatus, errorThrown) {
-				    	alert(xhr.responseText);
-				    }
-				});
-			   $('#photoDisplay').attr('src','');
-		   	   $('#photoDiv').removeClass('showDiv').addClass('hideDiv');
-			})
-		
-			$('li').sortElements(function(a, b){
-				if($(a).attr("id")!=undefined&&$(b).attr("id")!=undefined){
-	   			 return parseInt($(a).attr("id")) > parseInt($(b).attr("id")) ? 1 : -1;
-				}
-			})
-		
-			$('.HIDDEN').each(function(){
-				$(this).hide();
-		})
-		
-			$('.mis').click(function(event){
-				var id=$('#id').val();
-				if(id!=undefined && id!=""){
-					$.get($(this).attr('id')+'/'+id+'/edit', function(data) {
-				  		$('#contentPanel').html(data);
+			},
+			minLength: 2,
+			close: function( event, ui ) {
+				$("#constituency").val($(this).val());
+				if($(this).val()!=''){
+					$.getJSON('ref/data/'+this.value+'/districts', function(data) {
+						 $.each(data, function(key, item) {
+							 $('#constituency_details').html('[' + item.name + ':' + item.state.name + ']');
+						 });
 					});
-				}			
-			return false;			
-			})	
-		
-			initControls();
-			
-		    $(':input:visible:not([readonly]):first').focus();
-		    		 
-			$("form").submit(function(e){	
-				//e.preventDefault();			
-				var count=0;
-				$('.MANDATORY').each(function(){
-				if($(this).val()==""){
-					$(this).after("<span class='field_error'>Required</span>");					
-					count++;
-					return false;
 				}
-			})
-			if(count>0){
-			
+				else {
+					$('#constituency_details').html('');
+				}
 			}
-			else{
-				$.post($('form').attr('action'),  
-			            $("form").serialize(),  
-			            function(data){	
-		   				$('.contentPanel').html(data);	
-		   				$('#refresh').val($('#refreshSe').val());
-		   				if($('#info_type').val()=='success'){			   				
-			   	   	   		$("#grid").trigger("reloadGrid");		   				
-						}						   				  					   						   					
-			            }                                         
-	            );  
-			}				
-			        return false;  					
-			})
-			     
-			if($('#info_msg').val().length!=0){
-				$().toastmessage('showToast',{
-					text:$('#info_msg').val(),
-					type:$('#info_type').val(),
-					stayTime:3000,
-					inEffectDuration:600
+		});
+		
+		
+		$('#maritalStatus').change(function(){
+			$('#marital_details').toggle('slow');
+		});
+		$('#photoFile').fileupload({
+	        url: 'fileupload',
+	        formData:null,
+	        done: function (e, data) {
+	        	$('#photo').val(data.result);
+	        	$('#photoLink').attr('href','file/'+data.result);
+	        	$('#photoLink').html(data.result);
+	        	$('#downloadPhoto').css('display','inline');
+	        	$('#uploadPhoto').css('display','none');
+	        	$('#photoFile').after('');
+	        	$('#uploadMsg').css('display','none');
+	        },
+	        start: function(e) {
+	        	$('#uploadMsg').css('display','inline');
+	        }
+	    });
+		$('#photoRemove').click(function(){
+			if($('#photo').val() != ''){
+				$.delete_('file/remove/'+$('#photo').val(),function(data){
+					if(data){
+						$('#photo').val('');
+						$('#downloadPhoto').css('display','none');
+			        	$('#uploadPhoto').css('display','inline');
+					}
 				});
+				$.put('member_personal_details/'+$('#id').val()+'/photo');
 			}
+		});
 	});		
 </script>
+</head>
+<body>
+<div class="fields clearfix">
+<form:form  action="member_personal_details" method="PUT" modelAttribute="memberPersonalDetails">
+	<%@ include file="/common/info.jsp" %>
+	<h2><spring:message code="memberPersonalDetails.new.heading" text="Enter Details"/>
+		[Id:&nbsp;${memberPersonalDetails.id}]
+	</h2>
+		 <p>
+			 <div>
+			 	 <label class="small"><spring:message code="member_personal_details.photo.label" text="Upload Photo"/></label>
+			 	 <div id="uploadPhoto" style="border:0px;display:${empty memberPersonalDetails.photo ? 'inline':'none'}">
+				 	<input id="photoFile" type="file" class="sText"/><p id="uploadMsg" style="float:right;display:none;">File uploading. Please wait...</p>
+				 </div>
+				 <div id="downloadPhoto" style="display:${not empty memberPersonalDetails.photo ? 'inline':'none'}">
+				 	<form:hidden path="photo"/>
+				 	<a id="photoLink" href="file/"${memberPersonalDetails.photo}>${memberPersonalDetails.photo}</a>
+				 	<button id="photoRemove" class="butDef" type="button"><spring:message code="generic.remove" text="Remove"/></button>
+				 </div>
+				 <form:errors path="photo" cssClass="field_error" />
+			 </div>	
+		 </p>
+		<c:set var="titleErrors"><form:errors path="title"/></c:set>
+		<p <c:if test="${not empty titleErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.title" text="Title"/></label>
+			<form:select cssClass="sSelect" path="title" items="${titles}" itemValue="id" itemLabel="name" />
+			<span><form:errors path="title" /></span>	
+		</p>
+		<c:set var="firstNameErrors"><form:errors path="firstName"/></c:set>
+		<p <c:if test="${not empty firstNameErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.firstName" text="First Name"/></label>
+			<form:input cssClass="sText large" path="firstName"/>
+			<span><form:errors path="firstName" /></span>	
+		</p>
+		<c:set var="middleNameErrors"><form:errors path="middleName"/></c:set>
+		<p <c:if test="${not empty middleNameErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.middleName" text="Middle Name"/></label>
+			<form:input cssClass="sText large" path="middleName"/>
+			<span><form:errors path="middleName" /></span>	
+		</p>
+		<c:set var="lastNameErrors"><form:errors path="lastName"/></c:set>
+		<p <c:if test="${not empty lastNameErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.lastName" text="Last Name"/></label>
+			<form:input cssClass="sText large" path="lastName"/>
+			<span><form:errors path="lastName" /></span>	
+		</p>
+		<c:set var="aliasErrors"><form:errors path="alias"/></c:set>
+		<p <c:if test="${not empty aliasErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.alias" text="Member Alias"/></label>
+			<form:input cssClass="sText large" path="alias"/>
+			<label class="small"><spring:message code="member_personal_details.enableAliasing" text="Alias Enabled"/></label>
+			<form:checkbox cssClass="sCheck" path="enableAliasing" value="true" id="enableAliasing"/>
+			<span><form:errors path="alias" /><form:errors path="enableAliasing" /></span>	
+		</p>
+		<c:set var="genderErrors"><form:errors path="gender"/></c:set>
+		<p <c:if test="${not empty genderErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.gender" text="Gender"/></label>
+			<form:select path="gender" cssClass="sSelect">
+				<form:option value="male">Male</form:option>
+				<form:option value="male">Female</form:option>				
+	        </form:select>
+			<span><form:errors path="gender" /></span>	
+		</p>
+		<c:set var="birthDateErrors"><form:errors path="birthDate"/></c:set>
+		<p <c:if test="${not empty birthDateErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.birthDate" text="Birth Date"/></label>
+			<form:input cssClass="date sText" path="birthDate"/>
+			<span><form:errors path="birthDate" /></span>	
+		</p>
+		<c:set var="birthPlaceErrors"><form:errors path="placeOfBirth"/></c:set>
+		<p <c:if test="${not empty birthPlaceErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.placeOfBirth" text="Birth Place"/></label>
+			<form:input cssClass="sText" path="placeOfBirth"/>
+			<span><form:errors path="placeOfBirth" /></span>	
+		</p>
+		<c:set var="constituencyErrors"><form:errors path="constituency"/></c:set>
+		<p <c:if test="${not empty constituencyErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.constituency" text="Constituency"/></label>
+			<form:input class="sText" path="constituency" />
+			<span style="display:inline" id="constituency_details">[${district}:${state}]</span>
+			<span><form:errors path="constituency" /></span>	
+		</p>
+		
+		<c:set var="partyNameErrors"><form:errors path="partyName"/></c:set>
+		<p <c:if test="${not empty partyNameErrors}">class="error"</c:if>>
+			<label class="small"><spring:message code="member_personal_details.partyName" text="Party Name"/></label>
+			<form:select path="partyName" items="${parties}" itemValue="id" itemLabel="name" cssClass="sSelect"/>
+			<span><form:errors path="partyName" /></span>	
+		</p>
+		<p class="sep"></p>
+		<h2>Family Details</h2>
+			<c:set var="fatherNameErrors"><form:errors path="fatherName"/></c:set>
+			<p <c:if test="${not empty fatherNameErrors}">class="error"</c:if>>
+				<label class="small"><spring:message code="member_personal_details.fatherName" text="Father Name"/></label>
+				<form:input cssClass="sText large" path="fatherName"/>
+				<span><form:errors path="fatherName" /></span>	
+			</p>
+			<c:set var="motherNameErrors"><form:errors path="motherName"/></c:set>
+			<p <c:if test="${not empty motherNameErrors}">class="error"</c:if>>
+				<label class="small"><spring:message code="member_personal_details.motherName" text="Mother Name"/></label>
+				<form:input cssClass="sText large" path="motherName"/>
+				<span><form:errors path="motherName" /></span>	
+			</p>
+			<c:set var="maritalStatusErrors"><form:errors path="maritalStatus"/></c:set>
+			<p <c:if test="${not empty maritalStatusErrors}">class="error"</c:if>>
+				<label class="small"><spring:message code="member_personal_details.maritalStatus" text="Marital Status"/></label>
+				<form:checkbox cssClass="sCheck" path="maritalStatus" value="true" id="maritalStatus" />
+				<span><form:errors path="maritalStatus" /></span>	
+			</p>
+			<c:choose>
+			  <c:when test="${memberPersonalDetails.maritalStatus==true}">
+			  	<div id="marital_details" style="display:visible">
+			  </c:when>
+			  <c:otherwise>
+			  	<div id="marital_details" style="display:none">
+			  </c:otherwise>
+			</c:choose>
+				<c:set var="marriageDateErrors"><form:errors path="marriageDate"/></c:set>
+				<p <c:if test="${not empty marriageDateErrors}">class="error"</c:if>>
+					<label class="small"><spring:message code="member_personal_details.marriageDate" text="Marital Date"/></label>
+					<form:input cssClass="sText small" path="marriageDate"/>
+					<span><form:errors path="marriageDate" /></span>	
+				</p>
+				<c:set var="spouseNameErrors"><form:errors path="spouseName"/></c:set>
+				<p <c:if test="${not empty spouseNameErrors}">class="error"</c:if>>
+					<label class="small"><spring:message code="member_personal_details.spouseName" text="Spouse Name"/></label>
+					<form:input cssClass="sText large" path="spouseName"/>
+					<span><form:errors path="spouseName" /></span>	
+				</p>
+				<c:set var="noOfSonsErrors"><form:errors path="noOfSons"/></c:set>
+				<p <c:if test="${not empty noOfSonsErrors}">class="error"</c:if>>
+					<label class="small"><spring:message code="member_personal_details.noOfSons" text="No. of Sons"/></label>
+					<form:input cssClass="sText tiny" path="noOfSons"/>
+					<span><form:errors path="noOfSons" /></span>	
+				</p>
+				<c:set var="noOfDaughterErrors"><form:errors path="noOfDaughter"/></c:set>
+				<p <c:if test="${not empty noOfDaughterErrors}">class="error"</c:if>>
+					<label class="small"><spring:message code="member_personal_details.noOfDaughter" text="No. of Daughter"/></label>
+					<form:input cssClass="sText tiny" path="noOfDaughter" alt="Enter no of daughters" title="Enter no of daughters"/>
+					<span><form:errors path="noOfDaughter" /></span>	
+				</p>
+			</div>
+		<div class="fields">
+			<h2><spring:message code="member_personal_details.educationalQualification" text="Educational Qualification"/></h2>
+			<form:textarea cssClass="wysiwyg sTextarea" path="educationalQualification" rows="3" cols="78"/>
+		</div>
+		<div class="fields">
+			<h2><spring:message code="member_personal_details.profession" text="Educational Qualification"/></h2>
+			<form:textarea cssClass="wysiwyg sTextarea" path="profession" rows="3" cols="78"/>
+		</div>
+		<div class="fields">
+			<h2></h2>
+			<p class="tright">
+				<input id="submit" type="submit" value="<spring:message code='generic.submit' text='Submit'/>" class="butDef">
+			</p>
+		</div>
+	<form:hidden path="locale" />
+	<form:hidden path="version" />
+	<form:hidden path="id"/>	
+</form:form>
+</div>
+<input type="hidden" id="refreshSe" value="<%=session.getAttribute("refresh")%>">		
+<input type="hidden" id="const_name" value="${constituency.name}">
+<input type="hidden" id="const_id" value="${constituency.id}">	
+<input type="hidden" id="photo_size" value="${photoSize}">	
+<input type="hidden" id="photo_ext" value="${photoExt}">
+<input type="hidden" id="positionList" value="${positionList}">			
+<input type="hidden" id="dateformat" value="${dateformat}">			
 </body>
 </html>

@@ -73,6 +73,10 @@
 		<pattern>/member_role/assignmembers/*/new</pattern>
 		<pattern>/member_role/assignmembers/*/edit</pattern>
 		<pattern>/member_role/assignmembers/*/delete</pattern>	
+		<pattern>/member_personal_details/new</pattern>
+		<pattern>/member_personal_details/*/edit</pattern>
+		<pattern>/member_contact_details/*/edit</pattern>
+		<pattern>/member_other_details/*/edit</pattern>
     </decorator>
     <decorator name="mnu_form" page="mnu_form.jsp">
 		<pattern>/menus</pattern>
