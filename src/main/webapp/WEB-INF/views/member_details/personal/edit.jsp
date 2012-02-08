@@ -50,34 +50,7 @@
 		$('#maritalStatus').change(function(){
 			$('#marital_details').toggle('slow');
 		});
-		$('#photoFile').fileupload({
-	        url: 'fileupload',
-	        formData:null,
-	        done: function (e, data) {
-	        	$('#photo').val(data.result);
-	        	$('#photoLink').attr('href','file/'+data.result);
-	        	$('#photoLink').html(data.result);
-	        	$('#downloadPhoto').css('display','inline');
-	        	$('#uploadPhoto').css('display','none');
-	        	$('#photoFile').after('');
-	        	$('#uploadMsg').css('display','none');
-	        },
-	        start: function(e) {
-	        	$('#uploadMsg').css('display','inline');
-	        }
-	    });
-		$('#photoRemove').click(function(){
-			if($('#photo').val() != ''){
-				$.delete_('file/remove/'+$('#photo').val(),function(data){
-					if(data){
-						$('#photo').val('');
-						$('#downloadPhoto').css('display','none');
-			        	$('#uploadPhoto').css('display','inline');
-					}
-				});
-				$.put('member_personal_details/'+$('#id').val()+'/photo');
-			}
-		});
+		
 	});		
 </script>
 </head>
@@ -89,18 +62,22 @@
 		[Id:&nbsp;${memberPersonalDetails.id}]
 	</h2>
 		 <p>
-			 <div>
-			 	 <label class="small"><spring:message code="member_personal_details.photo.label" text="Upload Photo"/></label>
-			 	 <div id="uploadPhoto" style="border:0px;display:${empty memberPersonalDetails.photo ? 'inline':'none'}">
-				 	<input id="photoFile" type="file" class="sText"/><p id="uploadMsg" style="float:right;display:none;">File uploading. Please wait...</p>
-				 </div>
-				 <div id="downloadPhoto" style="display:${not empty memberPersonalDetails.photo ? 'inline':'none'}">
-				 	<form:hidden path="photo"/>
-				 	<a id="photoLink" href="file/"${memberPersonalDetails.photo}>${memberPersonalDetails.photo}</a>
-				 	<button id="photoRemove" class="butDef" type="button"><spring:message code="generic.remove" text="Remove"/></button>
-				 </div>
-				 <form:errors path="photo" cssClass="field_error" />
-			 </div>	
+		 	 <label class="small"><spring:message code="member_personal_details.photo.label" text="Upload Photo"/></label>
+		 	 <c:choose>
+		 	 	<c:when test="${empty memberPersonalDetails.photo}">
+			 	 	<jsp:include page="/common/file_upload.jsp">
+			 			<jsp:param name="fileid" value="photo" />
+			 	  	</jsp:include>
+		 	 	</c:when>
+		 	 	<c:otherwise>
+		 	 		<jsp:include page="/common/file_download.jsp">
+		 	 			<jsp:param name="fileid" value="photo" />
+			 			<jsp:param name="filetag" value="${memberPersonalDetails.photo}" />
+			 	  	</jsp:include>
+		 	 	</c:otherwise>
+		 	 
+		 	 </c:choose>
+			 <form:errors path="photo" cssClass="field_error" />
 		 </p>
 		<c:set var="titleErrors"><form:errors path="title"/></c:set>
 		<p <c:if test="${not empty titleErrors}">class="error"</c:if>>

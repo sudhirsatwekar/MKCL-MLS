@@ -8,17 +8,27 @@
 
 	<context:component-scan base-package="org.mkcl.els" />
 	<!-- Configures Handler Interceptors -->
-	
+
 	<mvc:interceptors>
 		<!-- Changes the locale when a 'locale' request parameter is sent; e.g. 
 			/?locale=de -->
 		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
-			  <property name="paramName" value="lang" />
+			<property name="paramName" value="lang" />
 		</bean>
 		<bean class="org.mkcl.els.common.interceptor.ErrorsRedirectInterceptor" />
 		<bean class="org.mkcl.els.common.interceptor.SessionCheckInterceptor">
 			<property name="redirect" value="login.htm"></property>
 		</bean>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.htm" />
+			<bean id="webContentInterceptor"
+				class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+				<property name="cacheSeconds" value="31556926" />
+				<property name="useExpiresHeader" value="true" />
+				<property name="useCacheControlHeader" value="true" />
+				<property name="useCacheControlNoStore" value="true" />
+			</bean>
+		</mvc:interceptor>
 	</mvc:interceptors>
 
 	<bean id="localeResolver"

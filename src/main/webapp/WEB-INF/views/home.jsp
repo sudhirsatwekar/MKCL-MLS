@@ -12,9 +12,6 @@
 		<script type="text/javascript" src="./resources/js/i18n/grid.locale-en.js"></script>
 		<script type="text/javascript" src="./resources/js/jquery.jqGrid.min.js"></script>
 		<script type="text/javascript" src="./resources/js/jquery/jquery-impromptu.3.2.min.js"></script>
-		<script type="text/javascript" src="./resources/js/swfobject.js"></script>
-		<script type="text/javascript" src="./resources/js/jquery/jquery.autoSuggest.minified.js"></script>
-		<script type="text/javascript" src="./resources/js/jquery.uploadify.js"></script>
 		<script type="text/javascript" src="./resources/js/jquery/jquery.iframe-transport.js"></script>
 		<script type="text/javascript" src="./resources/js/jquery/jquery.fileupload.js"></script>
 		<script type="text/javascript" src="./resources/js/common.js"></script> 
@@ -29,7 +26,6 @@
 		<link rel="stylesheet" rel="stylesheet" href="./resources/css/ui.jqgrid.css"  />
 		
 		<link rel="stylesheet" rel="stylesheet" href="./resources/css/jquery-impromptu.css"  />
-		<link rel="stylesheet" rel="stylesheet" href="./resources/css/uploadify.css"  />
 		<link rel="stylesheet" rel="stylesheet" href="./resources/css/cupertino/jquery-ui-1.8.16.custom.css"  />
 		<!-- comment extra.css for css validation -->
 		<link rel="stylesheet" type="text/css" media="all" href="./resources/css/template/extra.css" />

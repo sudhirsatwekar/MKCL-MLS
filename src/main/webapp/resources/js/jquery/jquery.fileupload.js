@@ -479,6 +479,7 @@
             // Initialize the global progress values:
             this._loaded += data.uploadedBytes || 0;
             this._total += this._getTotal(data.files);
+            $('#'+this.element.attr('id') + "_" +'progress').toggle();
         },
 
         _onDone: function (result, textStatus, jqXHR, options) {
@@ -493,6 +494,10 @@
             options.result = result;
             options.textStatus = textStatus;
             options.jqXHR = jqXHR;
+            var upload_ele ='#'+this.element.attr('id') + "_" +'upload';
+            $.get('./common/file_download.jsp?fileid='+this.element.attr('id').split('_')[1]+'&filetag='+result, function(data){
+            	 $(upload_ele).replaceWith(data);
+            });
             this._trigger('done', null, options);
         },
 
