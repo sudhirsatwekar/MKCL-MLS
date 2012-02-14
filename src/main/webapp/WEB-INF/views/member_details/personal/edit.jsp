@@ -12,20 +12,20 @@
 		$("#constituency").autocomplete({
 			source: function( request, response ) {
 				$.ajax({
-					url: "ref/constituencies",
+					url: "ref/constituencies.json",
 					dataType: "json",
 					data: {
 						featureClass: "P",
 						style: "full",
 						maxRows: 12,
-						q: request.term
+						term: request.term
 					},
 					success: function( data ) {
 						response( $.map(data.results, function( item ) {
 							return {
 								label: item.name,
 								value: item.id
-							}
+							};
 						}));
 					}
 				});

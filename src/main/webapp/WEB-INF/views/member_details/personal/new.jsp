@@ -9,16 +9,40 @@
 	$('document').ready(function(){	
 		initControls();
 		$('#key').val('');
-		$("#constituencies").autocomplete({
-			source: 'ref/constituencies.json?q='+$('#constituency').val(),
-			minLength: 2,
-			select: function( event, ui ) {
-				$("#constituency").val(this.value);
-				$.getJSON('ref/data/'+this.value+'/districts', function(data) {
-					 $.each(data, function(key, item) {
-						 $('#constituency_details').html('[' + item.name + ':' + item.state.name + ']');
-					 });
+		$("#constituency").autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url: "ref/constituencies.json",
+					dataType: "json",
+					data: {
+						featureClass: "P",
+						style: "full",
+						maxRows: 12,
+						term: request.term
+					},
+					success: function( data ) {
+						response( $.map(data.results, function( item ) {
+							return {
+								label: item.name,
+								value: item.id
+							};
+						}));
+					}
 				});
+			},
+			minLength: 2,
+			close: function( event, ui ) {
+				$("#constituency").val($(this).val());
+				if($(this).val()!=''){
+					$.getJSON('ref/data/'+this.value+'/districts', function(data) {
+						 $.each(data, function(key, item) {
+							 $('#constituency_details').html('[' + item.name + ':' + item.state.name + ']');
+						 });
+					});
+				}
+				else {
+					$('#constituency_details').html('');
+				}
 			}
 		});
 		
@@ -99,8 +123,7 @@
 		<c:set var="constituencyErrors"><form:errors path="constituency"/></c:set>
 		<p <c:if test="${not empty constituencyErrors}">class="error"</c:if>>
 			<label class="small"><spring:message code="member_personal_details.constituency" text="Constituency"/></label>
-			<input class="sText" id="constituencies" name="constituencies"/>
-			<form:hidden path="constituency"/>
+			<form:input class="sText" path="constituency" />
 			<span style="display:inline" id="constituency_details"></span>
 			<span><form:errors path="constituency" /></span>	
 		</p>
