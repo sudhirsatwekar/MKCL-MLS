@@ -149,7 +149,7 @@ input[type="submit"]:active, input[type="submit"]:focus, a.submit:active, a.subm
 		</select>
   	</p>
 	<p>
-		<label for="j_username"><spring:message code="user_lbl_fname" text="Username" /></label>
+		<label for="j_username"><spring:message code="user_lbl_username" text="Username" /></label>
 		<input type="text" id="j_username"   value="" name="j_username"/>
 	</p>
 	<p>

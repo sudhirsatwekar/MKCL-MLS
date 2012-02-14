@@ -132,11 +132,11 @@ public class ReferenceController extends BaseController {
     @RequestMapping(value = "/constituencies", method = RequestMethod.GET)
     public String getConstituenciesStartingWith(final ModelMap map,
                                                 final HttpServletRequest request) {    	
-    	String param=request.getParameter("q");
+    	String param=request.getParameter("term");
         String decodedString=null;
         List<Reference> constituencies=new ArrayList<Reference>();
         try {
-        	decodedString=new String(param.getBytes(CustomParameter.findByName("DEFAULT_URI_ENCODING").getValue()),CustomParameter.findByName("DEFAULT_ENCODING").getValue());
+        	decodedString=new String(param.getBytes("ISO-8859-1"),"UTF-8");
 			constituencies = Constituency
             .findConstituenciesStartingWith(decodedString.trim());
 			map.addAttribute("results", constituencies);

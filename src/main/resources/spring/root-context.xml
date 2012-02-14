@@ -28,8 +28,7 @@
 	<!-- declare the MessageSource bean -->
 	<bean id="messageSource"
 		class="org.mkcl.els.common.util.DatabaseDrivenMessageSource">
-		<property name="cacheSeconds" value="0" />
-		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="60" />
 	</bean>
 
 	<bean

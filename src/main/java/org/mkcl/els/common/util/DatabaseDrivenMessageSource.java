@@ -18,7 +18,7 @@ import java.util.Map;
 import org.mkcl.els.domain.MessageResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.AbstractMessageSource;
 
 /**
  * The Class DatabaseDrivenMessageSource.
@@ -26,26 +26,34 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * @author vishals
  * @since v1.0.0
  */
-public class DatabaseDrivenMessageSource extends
-        ReloadableResourceBundleMessageSource {
+public class DatabaseDrivenMessageSource extends AbstractMessageSource {
 
     /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(DatabaseDrivenMessageSource.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseDrivenMessageSource.class);
 
     /** The properties. */
-    private final Map<String, String> properties = new HashMap<String, String>();
+    private final Map<String, Object> properties = new HashMap<String, Object>();
+    
+    private long cacheMillis = -1;
 
     /**
-     * Instantiates a new database driven message source.
-     *
-     * public DatabaseDrivenMessageSource(){ //reload(); }
-     *
-     * @return the message format
-     * @throws Exception the exception
-     * @author sujitas
-     * @since v1.0.0
+     * Set the number of seconds to cache loaded properties files.
+     * <ul>
+     * <li>Default is "-1", indicating to cache forever (just like
+     * java.util.ResourceBundle).
+     * <li>A positive number will cache loaded properties files for the given
+     * number of seconds. This is essentially the interval between refresh attempts.
+     * Note that a refresh attempt will first check the last-modified timestamp
+     * of the file before actually reloading it; so if files don't change, this
+     * interval can be set rather low, as refresh attempts will not actually reload.
+     * <li>A value of "0" will check the last-modified timestamp of the file on
+     * every message access. <b>Do not use this in a production environment!</b>
+     * </ul>
      */
+    public void setCacheSeconds(int cacheSeconds) {
+        this.cacheMillis = cacheSeconds * 1000;
+    }
+
 
     /**
      * After properties set.
@@ -56,6 +64,7 @@ public class DatabaseDrivenMessageSource extends
 
     }
 
+    
     /*
      * (non-Javadoc)
      *
@@ -73,6 +82,22 @@ public class DatabaseDrivenMessageSource extends
     /*
      * (non-Javadoc)
      *
+     * @see
+     * org.springframework.context.support.ReloadableResourceBundleMessageSource
+     * #resolveCodeWithoutArguments(java.lang.String, java.util.Locale)
+     */
+    @Override
+    protected String resolveCodeWithoutArguments(final String code,
+                                                 final Locale locale) {
+        if (properties.size() == 0 || (System.currentTimeMillis() - (Long)properties.get("current_timestamp") > this.cacheMillis)) {
+            reload();
+        }
+        return getText(code, locale);
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
      * @see org.springframework.context.support.MessageSourceSupport
      * #createMessageFormat(java.lang.String, java.util.Locale)
      */
@@ -82,21 +107,6 @@ public class DatabaseDrivenMessageSource extends
         return new MessageFormat(message, locale);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.springframework.context.support.ReloadableResourceBundleMessageSource
-     * #resolveCodeWithoutArguments(java.lang.String, java.util.Locale)
-     */
-    @Override
-    protected String resolveCodeWithoutArguments(final String code,
-                                                 final Locale locale) {
-        if (properties.size() == 0) {
-            reload();
-        }
-        return getText(code, locale);
-    }
 
     /**
      * Reload.
@@ -105,7 +115,7 @@ public class DatabaseDrivenMessageSource extends
      * @since v1.0.0
      */
     public void reload() {
-        logger.info("Caache reloaded");
+        logger.info("MessageSource Cache reloaded");
         properties.clear();
         properties.putAll(loadTexts());
     }
@@ -119,9 +129,9 @@ public class DatabaseDrivenMessageSource extends
      */
     private String getText(final String code, final Locale locale) {
         String key = locale.toString() + "_" + code;
-        String textForCurrentLanguage = properties.get(key);
+        String textForCurrentLanguage = (String) properties.get(key);
         if (textForCurrentLanguage == null) {
-            textForCurrentLanguage = properties.get(Locale.ENGLISH.toString()
+            textForCurrentLanguage = (String) properties.get(Locale.ENGLISH.toString()
                     + "_" + code);
         }
         // return textForCurrentLanguage != null ? textForCurrentLanguage :
@@ -136,8 +146,8 @@ public class DatabaseDrivenMessageSource extends
      * @author sujitas
      * @since v1.0.0
      */
-    protected Map<String, String> loadTexts() {
-        Map<String, String> m = new HashMap<String, String>();
+    protected Map<String, Object> loadTexts() {
+        Map<String, Object> m = new HashMap<String, Object>();
         List<MessageResource> messages = MessageResource.findAll();
         for (MessageResource message : messages) {
             if (message.getValue() != null) {
@@ -146,6 +156,7 @@ public class DatabaseDrivenMessageSource extends
                                 + message.getCode(), message.getValue());
             }
         }
+        m.put("current_timestamp", System.currentTimeMillis());
         return m;
     }
 

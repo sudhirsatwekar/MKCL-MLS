@@ -8,28 +8,9 @@
 	<script type="text/javascript">
 	$('document').ready(function(){	
 		initControls();
-		$('#key').val(null);
+		$('#key').val('');
 		$("#constituencies").autocomplete({
-			source: function( request, response ) {
-				$.ajax({
-					url: "ref/constituencies",
-					dataType: "json",
-					data: {
-						featureClass: "P",
-						style: "full",
-						maxRows: 12,
-						q: request.term
-					},
-					success: function( data ) {
-						response( $.map(data.results, function( item ) {
-							return {
-								label: item.name,
-								value: item.name
-							}
-						}));
-					}
-				});
-			},
+			source: 'ref/constituencies.json?q='+$('#constituency').val(),
 			minLength: 2,
 			select: function( event, ui ) {
 				$("#constituency").val(this.value);
