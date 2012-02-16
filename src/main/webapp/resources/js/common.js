@@ -112,6 +112,7 @@ function loadGrid(gridId, baseFilter) {
 		    	}
 		    }
 		});
+		$("#grid").jqGrid('navGrid','#grid_pager',{search:false,edit:false,add:false,del:false});	
 		$("#grid").jqGrid('bindKeys');
 		$("#showhide_columns").click(function(){
 			$("#grid").setColumns({caption:"Check/Uncheck columns to Show/Hide"});
