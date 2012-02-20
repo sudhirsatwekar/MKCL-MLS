@@ -9,6 +9,9 @@
  */
 package org.mkcl.els.controller;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,7 @@ import org.mkcl.els.domain.Title;
 import org.mkcl.els.service.IAssemblyRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -54,7 +58,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping("/member_personal_details")
-public class MemberPersonalDetailsController {
+public class MemberPersonalDetailsController extends BaseController{
 
     /** The assembly role service. */
     @Autowired
@@ -291,15 +295,10 @@ public class MemberPersonalDetailsController {
      */
     @InitBinder
     public void initBinder(final WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(CustomParameter
-                .findByName("SERVER_DATEFORMAT").getValue());
-        dateFormat.setLenient(true);
-        binder.registerCustomEditor(java.util.Date.class, new CustomDateEditor(
-                dateFormat, true));
+        super.defaultBinders(binder);
         binder.registerCustomEditor(
                 Constituency.class, new ConstituencyEditor());
         binder.registerCustomEditor(Party.class, new PartyEditor());
-
     }
 
     /**

@@ -3,13 +3,22 @@
  */
 package org.mkcl.els.controller;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.mkcl.els.domain.AuthUser;
+import org.mkcl.els.domain.CustomParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,6 +62,26 @@ public abstract class BaseController {
            return false;
         else
            return true;
+    }
+    
+    
+    protected void defaultBinders(final WebDataBinder binder){
+        NumberFormat numFormatter = NumberFormat.getInstance();
+        DecimalFormat df = (DecimalFormat)numFormatter; 
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols(); 
+   
+        // set the beginning of the range to Arabic digits 
+        dfs.setZeroDigit('\u0966'); 
+        df.setDecimalFormatSymbols(dfs); 
+
+        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class,numFormatter,true));
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CustomParameter
+                .findByName("SERVER_DATEFORMAT").getValue());
+        dateFormat.setLenient(true);
+        dateFormat.setNumberFormat(numFormatter);
+        binder.registerCustomEditor(java.util.Date.class, new CustomDateEditor(
+                dateFormat, true));
     }
 
 }

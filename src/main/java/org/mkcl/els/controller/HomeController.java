@@ -9,6 +9,9 @@
  */
 package org.mkcl.els.controller;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -90,6 +93,16 @@ public class HomeController extends BaseController {
     public String home(final ModelMap model,
                        final HttpServletRequest request,
                        final Locale locale) {
+        Double lo = new Double(10.80);
+        NumberFormat numFormatter = NumberFormat.getInstance();
+        DecimalFormat df = (DecimalFormat)numFormatter; 
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols(); 
+   
+        // set the beginning of the range to Arabic digits 
+        dfs.setZeroDigit('\u0966'); 
+        df.setDecimalFormatSymbols(dfs); 
+
+        System.out.println(numFormatter.format(lo));
         String menuXml = new MenuItem().getMenuXml(locale);
         model.addAttribute("menu_xml", menuXml);
         // used by datepicker to read the date,time format
