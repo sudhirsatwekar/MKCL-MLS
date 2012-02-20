@@ -34,7 +34,6 @@
 		<h2></h2>
 		<p class="tright">
 			<input id="submit" type="submit" value="<spring:message code='generic.submit' text='Submit'/>" class="butDef">
-			<input id="sign" type="button" value="<spring:message code='generic.sign' text='Sign'/>" class="butDef">
 		</p>
 	</div>
 	<form:hidden path="locale" />
