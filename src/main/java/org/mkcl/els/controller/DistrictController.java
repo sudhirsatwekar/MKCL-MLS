@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class DistrictController.
@@ -43,6 +44,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/districts")
 public class DistrictController extends BaseController {
+
+    /**
+     * Gets the module page.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value = "module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "masters/districts/module";
+    }
 
     /**
      * Index.
@@ -70,7 +82,7 @@ public class DistrictController extends BaseController {
         district.setLocale(locale.toString());
         populateModel(
                 model, district, CustomParameter.findByName("DEFAULT_STATE")
-                        .getValue());
+                .getValue());
         return "masters/districts/new";
     }
 
@@ -89,17 +101,19 @@ public class DistrictController extends BaseController {
     }
 
     /**
-     * Creates the.
+     * Creates the new District.
      *
      * @param district the district
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
     public final String create(@Valid @ModelAttribute("district") final District district,
-                               final BindingResult result,
-                               final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model,
+            final RedirectAttributes redirectAttributes) {
         this.validate(district, result);
         if (result.hasErrors()) {
             populateModel(model, district, district.getState().getName());
@@ -108,8 +122,9 @@ public class DistrictController extends BaseController {
             return "masters/districts/new";
         }
         district.persist();
-        return "redirect:districts/" + district.getId()
-                + "/edit?type=success&msg=create_success";
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
+        return "redirect:districts/" + district.getId() + "/edit?type=success&msg=create_success";
 
     }
 
@@ -119,12 +134,13 @@ public class DistrictController extends BaseController {
      * @param district the district
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      */
     @RequestMapping(method = RequestMethod.PUT)
     public final String edit(@Valid @ModelAttribute("district") final District district,
-                             final BindingResult result,
-                             final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model, final RedirectAttributes redirectAttributes) {
         this.validate(district, result);
         if (result.hasErrors()) {
             populateModel(model, district, district.getState().getName());
@@ -133,6 +149,8 @@ public class DistrictController extends BaseController {
             return "masters/districts/edit";
         }
         district.update();
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "update_success");
         return "redirect:districts/" + district.getId()
                 + "/edit?type=success&msg=update_success";
 
@@ -211,8 +229,8 @@ public class DistrictController extends BaseController {
      * @param stateName the state name
      */
     private void populateModel(final ModelMap model,
-                               final District district,
-                               final String stateName) {
+            final District district,
+            final String stateName) {
         List<State> states = State.findAllSorted(
                 "name", district.getLocale(), false);
         State selectedState = State.findByName(stateName);
