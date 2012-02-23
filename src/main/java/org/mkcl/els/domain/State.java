@@ -79,8 +79,19 @@ public class State implements Serializable {
      * @param name the name
      */
     public State(final String name) {
+        this(name, "en");
+    }
+
+    /**
+     * Instantiates a new state.
+     *
+     * @param name the name
+     * @param locale the locale
+     */
+    public State(final String name, final String locale) {
         super();
         this.name = name;
+        this.locale = locale;
     }
 
     // -------------------------------Domain_Methods----------------------------------------------
@@ -120,6 +131,17 @@ public class State implements Serializable {
     }
 
     /**
+     * Find all by specfic locale.
+     *
+     * @param locale the locale
+     * @return the list
+     */
+    @Transactional(readOnly = true)
+    public static List<State> findAll(final String locale) {
+        return getStateRepository().findAll(locale);
+    }
+
+    /**
      * Find by name.
      *
      * @param name the name
@@ -140,8 +162,8 @@ public class State implements Serializable {
      */
     @Transactional(readOnly = true)
     public static List<State> findAllSorted(final String property,
-                                            final String locale,
-                                            final boolean descOrder) {
+            final String locale,
+            final boolean descOrder) {
         return getStateRepository().findAllSorted(property, locale, descOrder);
     }
 
@@ -152,9 +174,7 @@ public class State implements Serializable {
      */
     @Transactional
     public State persist() {
-        stateRepository.save(this);
-        stateRepository.flush();
-        return this;
+        return stateRepository.save(this);
     }
 
     /**
@@ -164,9 +184,7 @@ public class State implements Serializable {
      */
     @Transactional
     public State update() {
-        stateRepository.merge(this);
-        stateRepository.flush();
-        return this;
+        return stateRepository.merge(this);
     }
 
     /**
@@ -175,7 +193,6 @@ public class State implements Serializable {
     @Transactional
     public void remove() {
         stateRepository.remove(this);
-        stateRepository.flush();
     }
 
     /**
