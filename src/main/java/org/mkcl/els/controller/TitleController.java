@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class TitleController.
@@ -35,6 +36,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/titles")
 public class TitleController {
+
+    /**
+     * Index.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value = "module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "masters/titles/module";
+    }
 
     /**
      * List.
@@ -90,14 +102,16 @@ public class TitleController {
      * @param title the title
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      * @author samiksham
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("title") final Title title,
-                         final BindingResult result,
-                         final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model,
+            final RedirectAttributes redirectAttributes) {
         this.validate(title, result);
         if (result.hasErrors()) {
             model.addAttribute("title", title);
@@ -107,6 +121,8 @@ public class TitleController {
         }
 
         title.persist();
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
         return "redirect:titles/" + title.getId()
                 + "/edit?type=success&msg=create_success";
     }
@@ -117,14 +133,16 @@ public class TitleController {
      * @param title the title
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      * @author samiksham
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.PUT)
     public String update(@Valid @ModelAttribute("title") final Title title,
-                         final BindingResult result,
-                         final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model,
+            final RedirectAttributes redirectAttributes) {
         this.validate(title, result);
         if (result.hasErrors()) {
             model.addAttribute("title", title);
@@ -134,6 +152,8 @@ public class TitleController {
         }
 
         title.persist();
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "update_success");
         return "redirect:titles/" + title.getId()
                 + "/edit?type=success&msg=create_success";
     }
@@ -165,11 +185,10 @@ public class TitleController {
      * @since v1.0.0
      */
     private void validate(final Title title, final Errors errors) {
-        Title duplicateNumber = Title.findByName(title.getName());
+        Title duplicateNumber = Title.findByName(title.getName(), title.getLocale());
 
         if (duplicateNumber != null) {
             if (!duplicateNumber.getId().equals(title.getId())) {
-                // assemblyNo attribute of assemblyTerm object must be unique
                 errors.rejectValue("name", "NonUnique");
             }
         }
@@ -187,7 +206,6 @@ public class TitleController {
         // Check if the version matches
         if (title.getId() != null && !title.checkVersion()) {
             errors.rejectValue("name", "Version_Mismatch");
-
         }
 
     }
