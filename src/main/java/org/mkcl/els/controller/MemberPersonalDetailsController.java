@@ -9,10 +9,6 @@
  */
 package org.mkcl.els.controller;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +22,6 @@ import org.mkcl.els.common.editors.PartyEditor;
 import org.mkcl.els.domain.Constituency;
 import org.mkcl.els.domain.CustomParameter;
 import org.mkcl.els.domain.District;
-import org.mkcl.els.domain.Document;
 import org.mkcl.els.domain.Field;
 import org.mkcl.els.domain.Grid;
 import org.mkcl.els.domain.MemberDetails;
@@ -34,8 +29,6 @@ import org.mkcl.els.domain.Party;
 import org.mkcl.els.domain.Title;
 import org.mkcl.els.service.IAssemblyRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -58,7 +51,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping("/member_personal_details")
-public class MemberPersonalDetailsController extends BaseController{
+public class MemberPersonalDetailsController extends BaseController {
 
     /** The assembly role service. */
     @Autowired
@@ -73,22 +66,23 @@ public class MemberPersonalDetailsController extends BaseController{
      * @param model the model
      * @return the string
      */
-    @RequestMapping(value="module", method = RequestMethod.GET)
+    @RequestMapping(value = "module", method = RequestMethod.GET)
     public String index(final ModelMap model) {
         return "member_details/module";
     }
-    
+
     /**
      * String.
      *
      * @param model the model
+     * @param locale the locale
      * @return the string
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public String list(final ModelMap model,
-                       final Locale locale) {
+            final Locale locale) {
         Grid grid = Grid.findByName("MEMBER_DETAIL_GRID", locale.toString());
         model.addAttribute("gridId", grid.getId());
         return "member_details/personal/list";
@@ -106,8 +100,8 @@ public class MemberPersonalDetailsController extends BaseController{
      */
     @RequestMapping(value = "new", method = RequestMethod.GET)
     public String newForm(final ModelMap model,
-                          final Error errors,
-                          final Locale locale) {
+            final Error errors,
+            final Locale locale) {
         MemberDetails memberPersonalDetails = new MemberDetails();
         memberPersonalDetails.setLocale(locale.toString());
         populateModel(model, memberPersonalDetails);
@@ -134,8 +128,8 @@ public class MemberPersonalDetailsController extends BaseController{
      */
     @RequestMapping(value = "{id}/edit", method = RequestMethod.GET)
     public String edit(final HttpServletRequest request,
-                       @PathVariable final Long id,
-                       final ModelMap model) {
+            @PathVariable final Long id,
+            final ModelMap model) {
         MemberDetails memberPersonalDetails = MemberDetails.findById(id);
         if (memberPersonalDetails.getConstituency() != null) {
             List<District> districts = memberPersonalDetails.getConstituency()
@@ -161,21 +155,19 @@ public class MemberPersonalDetailsController extends BaseController{
      * @param memberPersonalDetails the member personal details
      * @param result the result
      * @param model the model
-     * @param constituencies the constituencies
-     * @param district the district
-     * @param state the state
      * @param request the request
+     * @param redirectAttributes the redirect attributes
      * @return the string
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("memberPersonalDetails")
-                         final MemberDetails memberPersonalDetails,
-                         final BindingResult result,
-                         final ModelMap model,
-                         final HttpServletRequest request,
-                         final RedirectAttributes redirectAttributes) {
+    final MemberDetails memberPersonalDetails,
+    final BindingResult result,
+    final ModelMap model,
+    final HttpServletRequest request,
+    final RedirectAttributes redirectAttributes) {
         toggleMaritalDetails(memberPersonalDetails);
         this.validate(memberPersonalDetails, result);
         if (result.hasErrors()) {
@@ -191,19 +183,19 @@ public class MemberPersonalDetailsController extends BaseController{
             memberPersonalDetails.persist();
         }
         request.getSession().setAttribute("refresh", "");
-        redirectAttributes.addFlashAttribute("type","success");
-        redirectAttributes.addFlashAttribute("msg","create_success");
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
         String returnUrl = "redirect:member_personal_details/"
-                                + memberPersonalDetails.getId() + "/edit";
+                + memberPersonalDetails.getId() + "/edit";
         if (CustomParameter.findByName("MIS_PROGRESSIVE_DISPLAY").getValue()
                 .toLowerCase().equals("progressive")) {
             returnUrl = "redirect:/member_contact_details/"
                     + memberPersonalDetails.getId() + "/edit";
-        } 
+        }
         return returnUrl;
     }
 
-    
+
     /**
      * String.
      *
@@ -211,20 +203,18 @@ public class MemberPersonalDetailsController extends BaseController{
      * @param memberPersonalDetails the member personal details
      * @param result the result
      * @param model the model
-     * @param constituencies the constituencies
-     * @param district the district
-     * @param state the state
+     * @param redirectAttributes the redirect attributes
      * @return the string
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.PUT)
     public String update(final HttpServletRequest request,
-                       @Valid @ModelAttribute("memberPersonalDetails")
-                       final MemberDetails memberPersonalDetails,
-                       final BindingResult result,
-                       final ModelMap model,
-                       final RedirectAttributes redirectAttributes) {
+            @Valid @ModelAttribute("memberPersonalDetails")
+    final MemberDetails memberPersonalDetails,
+    final BindingResult result,
+    final ModelMap model,
+    final RedirectAttributes redirectAttributes) {
         toggleMaritalDetails(memberPersonalDetails);
         this.validate(memberPersonalDetails, result);
         if (result.hasErrors()) {
@@ -234,15 +224,15 @@ public class MemberPersonalDetailsController extends BaseController{
             return "member_details/personal/edit";
         }
         memberPersonalDetails.updateMemberPersonalDetails();
-        redirectAttributes.addFlashAttribute("type","success");
-        redirectAttributes.addFlashAttribute("msg","update_success");
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "update_success");
         String returnUrl = "redirect:member_personal_details/"
-                                + memberPersonalDetails.getId() + "/edit";
+                + memberPersonalDetails.getId() + "/edit";
         if (CustomParameter.findByName("MIS_PROGRESSIVE_DISPLAY").getValue()
                 .toLowerCase().equals("progressive")) {
             returnUrl = "redirect:/member_contact_details/"
                     + memberPersonalDetails.getId() + "/edit";
-        } 
+        }
         return returnUrl;
     }
 
@@ -258,13 +248,13 @@ public class MemberPersonalDetailsController extends BaseController{
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
     public String delete(@PathVariable final Long id,
-                         final ModelMap model,
-                         final HttpServletRequest request) {
+            final ModelMap model,
+            final HttpServletRequest request) {
         MemberDetails memberDetails = MemberDetails.findById(id);
         memberDetails.remove();
         return "info";
     }
-    
+
     /**
      * Delete photo.
      *
@@ -275,12 +265,11 @@ public class MemberPersonalDetailsController extends BaseController{
      */
     @Transactional
     @RequestMapping(value = "{id}/photo", method = RequestMethod.PUT)
-    public @ResponseBody
-            boolean updatePhoto(@PathVariable final Long id,
-                         final ModelMap model,
-                         final HttpServletRequest request) {
+    public @ResponseBody boolean updatePhoto(@PathVariable final Long id,
+            final ModelMap model,
+            final HttpServletRequest request) {
         MemberDetails memberDetails = MemberDetails.findById(id);
-        if(memberDetails.getPhoto()!=null && !memberDetails.getPhoto().equals("")) {
+        if (memberDetails.getPhoto() != null && !memberDetails.getPhoto().equals("")) {
             return memberDetails.resetPhoto();
         }
         return false;
@@ -310,7 +299,7 @@ public class MemberPersonalDetailsController extends BaseController{
      * @since v1.0.0
      */
     private void validate(final MemberDetails memberPersonalDetails,
-                          final Errors errors) {
+            final Errors errors) {
 
     }
 
@@ -323,7 +312,7 @@ public class MemberPersonalDetailsController extends BaseController{
      * @since v1.0.0
      */
     private void populateModel(final ModelMap model,
-                               final MemberDetails memberPersonalDetails) {
+            final MemberDetails memberPersonalDetails) {
         List<Field> fieldsCollection = Field.findByFormNameSorted(FORM_NAME);
         // List<Integer> positionList=new ArrayList<Integer>();
         StringBuffer positionList = new StringBuffer();
@@ -340,14 +329,14 @@ public class MemberPersonalDetailsController extends BaseController{
                 "name", memberPersonalDetails.getLocale(), false));
         model.addAttribute("memberPersonalDetails", memberPersonalDetails);
     }
-    
+
     /**
      * Toggle marital details.
      *
      * @param memberPersonalDetails the member personal details
      */
     private void toggleMaritalDetails(final MemberDetails memberPersonalDetails) {
-        if(!memberPersonalDetails.isMaritalStatus()){
+        if (!memberPersonalDetails.isMaritalStatus()) {
             memberPersonalDetails.setMarriageDate(null);
             memberPersonalDetails.setSpouseName(null);
             memberPersonalDetails.setNoOfSons(null);
