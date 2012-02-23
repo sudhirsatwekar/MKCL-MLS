@@ -76,9 +76,6 @@
 				        });
 			        }
 				}});
-				
-
-				//$("#grid").jqGrid('delGridRow',row,{reloadAfterSubmit:true, mtype:'DELETE', url:url+'/'+row+'/delete',modal:true});
 			}
 		}
 
