@@ -61,6 +61,7 @@ public class Title implements Serializable {
     /** The title repository. */
     @Autowired
     private transient TitleRepository titleRepository;
+
     //---------------------------------Constructors----------------------//
 
     /**
@@ -75,13 +76,11 @@ public class Title implements Serializable {
      *
      * @param name the name
      * @param locale the locale
-     * @param version the version
      */
-    public Title(final String name, final String locale, final Long version) {
+    public Title(final String name, final String locale) {
         super();
         this.name = name;
         this.locale = locale;
-        this.version = version;
     }
 
     //----------------------------Domain Methods-------------------------//
@@ -109,9 +108,7 @@ public class Title implements Serializable {
      */
     @Transactional
     public Title persist() {
-        titleRepository.save(this);
-        titleRepository.flush();
-        return this;
+        return titleRepository.save(this);
     }
 
     /**
@@ -123,9 +120,7 @@ public class Title implements Serializable {
      */
     @Transactional
     public Title update() {
-        titleRepository.merge(this);
-        titleRepository.flush();
-        return this;
+        return titleRepository.merge(this);
     }
 
 
@@ -138,7 +133,6 @@ public class Title implements Serializable {
     @Transactional
     public void remove() {
         titleRepository.remove(this);
-        titleRepository.flush();
     }
 
     /**
@@ -180,8 +174,8 @@ public class Title implements Serializable {
      */
     @Transactional(readOnly = true)
     public static List<Title> findAllSorted(final String property,
-                                            final String locale,
-                                            final boolean descOrder) {
+            final String locale,
+            final boolean descOrder) {
         return getRepository().findAllSorted(property, locale, descOrder);
     }
 
