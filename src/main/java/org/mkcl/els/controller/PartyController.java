@@ -10,13 +10,10 @@
 package org.mkcl.els.controller;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
 import org.mkcl.els.domain.CustomParameter;
-import org.mkcl.els.domain.Document;
 import org.mkcl.els.domain.Grid;
 import org.mkcl.els.domain.Party;
 import org.springframework.stereotype.Controller;
@@ -27,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class PartyController.
@@ -35,8 +33,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @since v1.0.0
  */
 @Controller
-@RequestMapping("/party")
+@RequestMapping("/parties")
 public class PartyController extends BaseController {
+
+    /**
+     * Index.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value = "module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "masters/parties/module";
+    }
 
     /**
      * List.
@@ -69,7 +78,7 @@ public class PartyController extends BaseController {
         model.addAttribute(party);
         model.addAttribute(
                 "photoExt", CustomParameter.findByName("PARTY_FLAG_EXTENSION")
-                        .getValue());
+                .getValue());
         model.addAttribute("photoSize", Long.parseLong(CustomParameter
                 .findByName("PARTY_FLAG_SIZE").getValue()) * 1024 * 1024);
         return "masters/parties/new";
@@ -88,18 +97,6 @@ public class PartyController extends BaseController {
     public String edit(@PathVariable final Long id, final ModelMap model) {
         Party party = Party.findById(id);
         model.addAttribute(party);
-        model.addAttribute(
-                "photoExt", CustomParameter.findByName("PHOTO_EXTENSION")
-                        .getValue());
-        model.addAttribute("photoSize", Long.parseLong(CustomParameter
-                .findByName("PHOTO_SIZE").getValue()) * 1024 * 1024);
-        if (party.getPhoto() != null && (!party.getPhoto().isEmpty())) {
-                final Document document = Document.findByTag(party.getPhoto());
-                if (document != null) {
-                    model.addAttribute(
-                            "photoOriginalName", document.getOriginalFileName());
-                }
-        }
         return "masters/parties/edit";
     }
 
@@ -109,14 +106,16 @@ public class PartyController extends BaseController {
      * @param party the party
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("party") final Party party,
-                         final BindingResult result,
-                         final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model,
+            final RedirectAttributes redirectAttributes) {
         this.validate(party, result);
 
         if (result.hasErrors()) {
@@ -127,8 +126,9 @@ public class PartyController extends BaseController {
         }
 
         party.persist();
-        return "redirect:party/" + party.getId()
-                + "/edit?type=success&msg=create_success";
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
+        return "redirect:parties/" + party.getId() + "/edit";
     }
 
     /**
@@ -137,14 +137,16 @@ public class PartyController extends BaseController {
      * @param party the party
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(method = RequestMethod.PUT)
     public String update(@Valid @ModelAttribute("party") final Party party,
-                         final BindingResult result,
-                         final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model,
+            final RedirectAttributes redirectAttributes) {
         this.validate(party, result);
         if (result.hasErrors()) {
             model.addAttribute("party", party);
@@ -154,8 +156,9 @@ public class PartyController extends BaseController {
         }
 
         party.update();
-        return "redirect:party/" + party.getId()
-                + "/edit?type=success&msg=update_success";
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "update_success");
+        return "redirect:parties/" + party.getId() + "/edit";
     }
 
     /**
@@ -184,7 +187,7 @@ public class PartyController extends BaseController {
      * @since v1.0.0
      */
     private void validate(final Party party, final Errors errors) {
-        if (party.getName() != null) {
+        /*if (party.getName() != null) {
             if (party.getLocale().equals("en")) {
                 String name = party.getName();
                 Pattern pattern = Pattern.compile("[A-Za-z//(//) ]{1,100}");
@@ -194,7 +197,6 @@ public class PartyController extends BaseController {
                 }
                 if (name.length() > 100 || name.length() < 1) {
                     errors.rejectValue("name", "Size");
-
                 }
             }
         }
@@ -211,7 +213,7 @@ public class PartyController extends BaseController {
 
                 }
             }
-        }
+        }*/
         Party duplicateParty = Party.findByName(party.getName());
         if (duplicateParty != null) {
             if (!duplicateParty.getId().equals(party.getId())) {
