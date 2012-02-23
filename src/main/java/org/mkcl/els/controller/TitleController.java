@@ -10,8 +10,6 @@
 package org.mkcl.els.controller;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
@@ -192,7 +190,7 @@ public class TitleController {
                 errors.rejectValue("name", "NonUnique");
             }
         }
-        if (title.getName() != null) {
+        /*if (title.getName() != null) {
             final String name = title.getName();
             final Pattern pattern = Pattern.compile("[A-Za-z ]{1,20}");
             final Matcher matcher = pattern.matcher(name);
@@ -202,7 +200,7 @@ public class TitleController {
             if (name.length() > 20 || name.length() < 1) {
                 errors.rejectValue("name", "Size");
             }
-        }
+        }*/
         // Check if the version matches
         if (title.getId() != null && !title.checkVersion()) {
             errors.rejectValue("name", "Version_Mismatch");
