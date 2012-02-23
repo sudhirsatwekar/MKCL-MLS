@@ -33,16 +33,40 @@ public class StateTest extends AbstractTest {
     public final void testPersist() {
         final State state = new State("Karnataka");
         state.persist();
-        Assert.assertNotNull("Saved state Data ", state);
+        Assert.assertTrue(null != State.findByName("Karnataka"));
     }
 
     /**
      * Test find all.
      */
     @Test
+    @Transactional
     public final void testFindAll() {
+        State karnataka = new State("Karnataka");
+        State maharashtra = new State("Maharashtra");
+        State delhi = new State("Delhi");
+        karnataka.persist();
+        maharashtra.persist();
+        delhi.persist();
         final List<State> lstState = State.findAll();
-        Assert.assertNotNull(lstState);
+        Assert.assertEquals(3, lstState.size());
+    }
+
+
+    /**
+     * Test find all with specific locale.
+     */
+    @Test
+    @Transactional
+    public final void testFindAllWithSpecificLocale() {
+        State karnataka = new State("Karnataka", "en");
+        State maharashtra = new State("Maharashtra", "mr_IN");
+        State delhi = new State("Delhi", "mr_IN");
+        karnataka.persist();
+        maharashtra.persist();
+        delhi.persist();
+        final List<State> lstState = State.findAll("mr_IN");
+        Assert.assertEquals(2, lstState.size());
     }
 
     /**
@@ -80,7 +104,7 @@ public class StateTest extends AbstractTest {
         final State state = State.findById(statePersist.getId());
         state.setName("KarnatakaState");
         state.update();
-        Assert.assertNotNull("updated state Data ", state);
+        Assert.assertTrue(null != State.findByName("KarnatakaState"));
     }
 
     /**
@@ -88,12 +112,12 @@ public class StateTest extends AbstractTest {
      */
     @Test
     @Transactional
-    public final void testRemoveState() {
+    public void testRemoveState() {
         State statePresist = new State("Karnataka");
         statePresist.persist();
-        final State state = State.findByName("Karnataka");
+        State state = State.findByName("Karnataka");
         state.remove();
-        Assert.assertNotNull("removed state Data ", state);
+        Assert.assertTrue(null == State.findByName("Karnataka"));
     }
 
 }
