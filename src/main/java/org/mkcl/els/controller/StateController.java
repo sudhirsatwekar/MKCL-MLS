@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * The Class StateController.
@@ -36,6 +37,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/states")
 public class StateController extends BaseController {
+
+    /**
+     * Gets the module page.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value = "module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "masters/states/module";
+    }
+
 
     /**
      * Index.
@@ -85,12 +98,14 @@ public class StateController extends BaseController {
      * @param state the state
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
     public final String create(@Valid @ModelAttribute("state") final State state,
-                               final BindingResult result,
-                               final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model,
+            final RedirectAttributes redirectAttributes) {
         this.validate(state, result);
         if (result.hasErrors()) {
             model.addAttribute("state", state);
@@ -99,6 +114,8 @@ public class StateController extends BaseController {
             return "masters/states/new";
         }
         state.persist();
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
         return "redirect:states/" + state.getId() + "/edit?type=success&msg=create_success";
     }
 
@@ -108,12 +125,13 @@ public class StateController extends BaseController {
      * @param state the state
      * @param result the result
      * @param model the model
+     * @param redirectAttributes the redirect attributes
      * @return the string
      */
     @RequestMapping(method = RequestMethod.PUT)
     public final String edit(@Valid @ModelAttribute("state") final State state,
-                             final BindingResult result,
-                             final ModelMap model) {
+            final BindingResult result,
+            final ModelMap model, final RedirectAttributes redirectAttributes) {
         this.validate(state, result);
         if (result.hasErrors()) {
             model.addAttribute("state", state);
@@ -122,6 +140,8 @@ public class StateController extends BaseController {
             return "masters/states/edit";
         }
         state.update();
+        redirectAttributes.addFlashAttribute("type","success");
+        redirectAttributes.addFlashAttribute("msg","update_success");
         return "redirect:states/" + state.getId() + "/edit?type=success&msg=update_success";
     }
 
