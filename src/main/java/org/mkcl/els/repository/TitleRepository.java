@@ -21,17 +21,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TitleRepository extends BaseRepository<Title, Long> {
 
-    /*public Title findByName(String name) {
-        Search search = new Search();
-        search.addFilterEqual("name", name);
-        Title title = this.searchUnique(search);
-        return title;
-    }
-
-    public List<Title> findAllSorted(){
-        Search search=new Search();
-        search.addSort("name",false);
-        return this.search(search);
-    }*/
-
 }
