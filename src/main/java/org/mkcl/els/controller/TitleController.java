@@ -122,8 +122,7 @@ public class TitleController {
         title.persist();
         redirectAttributes.addFlashAttribute("type", "success");
         redirectAttributes.addFlashAttribute("msg", "create_success");
-        return "redirect:titles/" + title.getId()
-                + "/edit?type=success&msg=create_success";
+        return "redirect:titles/" + title.getId() + "/edit";
     }
 
     /**
@@ -153,8 +152,7 @@ public class TitleController {
         title.persist();
         redirectAttributes.addFlashAttribute("type", "success");
         redirectAttributes.addFlashAttribute("msg", "update_success");
-        return "redirect:titles/" + title.getId()
-                + "/edit?type=success&msg=create_success";
+        return "redirect:titles/" + title.getId() + "/edit";
     }
 
     /**

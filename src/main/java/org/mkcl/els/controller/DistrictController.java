@@ -130,7 +130,7 @@ public class DistrictController extends BaseController {
         district.persist();
         redirectAttributes.addFlashAttribute("type", "success");
         redirectAttributes.addFlashAttribute("msg", "create_success");
-        return "redirect:districts/" + district.getId() + "/edit?type=success&msg=create_success";
+        return "redirect:districts/" + district.getId() + "/edit";
 
     }
 
@@ -160,8 +160,7 @@ public class DistrictController extends BaseController {
         district.update();
         redirectAttributes.addFlashAttribute("type", "success");
         redirectAttributes.addFlashAttribute("msg", "update_success");
-        return "redirect:districts/" + district.getId()
-                + "/edit?type=success&msg=update_success";
+        return "redirect:districts/" + district.getId() + "/edit";
 
     }
 

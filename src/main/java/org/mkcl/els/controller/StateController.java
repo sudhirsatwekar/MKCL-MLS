@@ -117,7 +117,7 @@ public class StateController extends BaseController {
         state.persist();
         redirectAttributes.addFlashAttribute("type", "success");
         redirectAttributes.addFlashAttribute("msg", "create_success");
-        return "redirect:states/" + state.getId() + "/edit?type=success&msg=create_success";
+        return "redirect:states/" + state.getId() + "/edit";
     }
 
     /**
@@ -143,7 +143,7 @@ public class StateController extends BaseController {
         state.update();
         redirectAttributes.addFlashAttribute("type", "success");
         redirectAttributes.addFlashAttribute("msg", "update_success");
-        return "redirect:states/" + state.getId() + "/edit?type=success&msg=update_success";
+        return "redirect:states/" + state.getId() + "/edit";
     }
 
     /**
