@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -165,17 +166,14 @@ public class PartyController extends BaseController {
      * Delete.
      *
      * @param id the id
-     * @param model the model
      * @return the string
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
-    public String delete(@PathVariable final Long id, final ModelMap model) {
+    public @ResponseBody boolean delete(@PathVariable final Long id) {
         Party.findById(id).remove();
-        model.addAttribute("type", "success");
-        model.addAttribute("msg", "delete_success");
-        return "info";
+        return true;
     }
 
     /**
