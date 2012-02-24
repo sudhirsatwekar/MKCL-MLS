@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -140,8 +141,8 @@ public class StateController extends BaseController {
             return "masters/states/edit";
         }
         state.update();
-        redirectAttributes.addFlashAttribute("type","success");
-        redirectAttributes.addFlashAttribute("msg","update_success");
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "update_success");
         return "redirect:states/" + state.getId() + "/edit?type=success&msg=update_success";
     }
 
@@ -153,12 +154,10 @@ public class StateController extends BaseController {
      * @return the string
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
-    public final String delete(@PathVariable final Long id, final ModelMap model) {
+    public @ResponseBody boolean delete(@PathVariable final Long id, final ModelMap model) {
         final State state = State.findById(id);
         state.remove();
-        model.addAttribute("type", "success");
-        model.addAttribute("msg", "delete_success");
-        return "info";
+        return true;
     }
 
     /**
