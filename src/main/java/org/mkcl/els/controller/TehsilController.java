@@ -21,8 +21,6 @@ POSSIBILITY OF SUCH DAMAGE.
  */
 package org.mkcl.els.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +28,7 @@ import java.util.regex.Pattern;
 import javax.validation.Valid;
 
 import org.mkcl.els.common.editors.DistrictEditor;
+import org.mkcl.els.common.editors.StateEditor;
 import org.mkcl.els.domain.CustomParameter;
 import org.mkcl.els.domain.District;
 import org.mkcl.els.domain.Grid;
@@ -46,8 +45,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TehsilController.
  *
@@ -58,9 +58,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/tehsils")
 public class TehsilController extends BaseController {
 
-    /** The tehsil service. */
-    // @Autowired
-    // ITehsilService tehsilService;
+    /**
+     * Index.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value = "module", method = RequestMethod.GET)
+    public String index(final ModelMap model) {
+        return "masters/tehsils/module";
+    }
+
 
     /**
      * Index.
@@ -83,11 +91,16 @@ public class TehsilController extends BaseController {
      * @return the string
      */
     @RequestMapping(value = "new", method = RequestMethod.GET)
-    public String _new(final ModelMap model, final Locale locale) {
+    public String newForm(final ModelMap model, final Locale locale) {
+        State defaultState = State.findByName(CustomParameter.findByName(
+                "DEFAULT_STATE_" + locale.toString().toUpperCase()).getValue());
         Tehsil tehsil = new Tehsil();
+        tehsil.setState(defaultState);
         tehsil.setLocale(locale.toString());
-        populateModel(model, tehsil,
-                CustomParameter.findByName("DEFAULT_STATE").getValue());
+
+        model.addAttribute("states", State.findAll(locale.toString()));
+        model.addAttribute("districts", District.findDistrictsByStateId(defaultState.getId()));
+        model.addAttribute("tehsil", tehsil);
         return "masters/tehsils/new";
     }
 
@@ -96,12 +109,15 @@ public class TehsilController extends BaseController {
      *
      * @param id the id
      * @param model the model
+     * @param locale the locale
      * @return the string
      */
     @RequestMapping(value = "{id}/edit", method = RequestMethod.GET)
-    public String edit(@PathVariable final Long id, final ModelMap model) {
-        final Tehsil tehsil = Tehsil.findById(id);
-        populateModel(model, tehsil, tehsil.getDistrict().getState().getName());
+    public String edit(@PathVariable final Long id, final ModelMap model, final Locale locale) {
+        Tehsil tehsil = Tehsil.findById(id);
+        model.addAttribute("states", State.findAll(locale.toString()));
+        model.addAttribute("districts", District.findDistrictsByStateId(tehsil.getState().getId()));
+        model.addAttribute("tehsil", tehsil);
         return "masters/tehsils/edit";
     }
 
@@ -112,22 +128,30 @@ public class TehsilController extends BaseController {
      * @param result the result
      * @param model the model
      * @param state the state
+     * @param redirectAttributes the redirect attributes
+     * @param locale the locale
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("tehsil") final Tehsil tehsil,
             final BindingResult result, final ModelMap model,
-            @RequestParam final String state) {
+            @RequestParam final String state,
+            final RedirectAttributes redirectAttributes,
+            final Locale locale) {
         this.validate(tehsil, result);
         if (result.hasErrors()) {
-            populateModel(model, tehsil, state);
+            model.addAttribute("states", State.findAll(locale.toString()));
+            model.addAttribute("districts",
+                    District.findDistrictsByStateId(tehsil.getState().getId()));
+            model.addAttribute("tehsil", tehsil);
             model.addAttribute("type", "error");
             model.addAttribute("msg", "create_failed");
             return "masters/tehsils/new";
         }
         tehsil.persist();
-        return "redirect:tehsils/" + tehsil.getId()
-                + "/edit?type=success&msg=create_success";
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
+        return "redirect:tehsils/" + tehsil.getId() + "/edit";
 
     }
 
@@ -138,22 +162,30 @@ public class TehsilController extends BaseController {
      * @param result the result
      * @param model the model
      * @param state the state
+     * @param redirectAttributes the redirect attributes
+     * @param locale the locale
      * @return the string
      */
     @RequestMapping(method = RequestMethod.PUT)
     public String edit(@Valid @ModelAttribute("tehsil") final Tehsil tehsil,
             final BindingResult result, final ModelMap model,
-            @RequestParam final String state) {
+            @RequestParam final String state,
+            final RedirectAttributes redirectAttributes,
+            final Locale locale) {
         this.validate(tehsil, result);
         if (result.hasErrors()) {
-            populateModel(model, tehsil, state);
+            model.addAttribute("states", State.findAll(locale.toString()));
+            model.addAttribute("districts",
+                    District.findDistrictsByStateId(tehsil.getState().getId()));
+            model.addAttribute("tehsil", tehsil);
             model.addAttribute("type", "error");
             model.addAttribute("msg", "update_failed");
             return "masters/tehsils/edit";
         }
         tehsil.update(tehsil);
-        return "redirect:tehsils/" + tehsil.getId()
-                + "/edit?type=success&msg=update_success";
+        redirectAttributes.addFlashAttribute("type", "success");
+        redirectAttributes.addFlashAttribute("msg", "create_success");
+        return "redirect:tehsils/" + tehsil.getId() + "/edit";
 
     }
 
@@ -161,16 +193,13 @@ public class TehsilController extends BaseController {
      * Delete.
      *
      * @param id the id
-     * @param model the model
      * @return the string
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
-    public String delete(@PathVariable final Long id, final ModelMap model) {
+    public @ResponseBody boolean delete(@PathVariable final Long id) {
         Tehsil tehsil = Tehsil.findById(id);
         tehsil.remove();
-        model.addAttribute("type", "success");
-        model.addAttribute("msg", "delete_success");
-        return "info";
+        return true;
     }
 
     /**
@@ -216,27 +245,7 @@ public class TehsilController extends BaseController {
     @InitBinder
     public void initBinder(final WebDataBinder binder) {
         binder.registerCustomEditor(District.class, new DistrictEditor());
-    }
-
-    /**
-     * Populate model.
-     *
-     * @param model the model
-     * @param tehsil the tehsil
-     * @param stateName the state name
-     */
-    private void populateModel(final ModelMap model, final Tehsil tehsil,
-            final String stateName) {
-        List<State> states = State.findAllSorted("name" , tehsil.getLocale() , false);
-        State selectedState = State.findByName(stateName);
-        List<State> newStates = new ArrayList<State>();
-        newStates.add(selectedState);
-        states.remove(selectedState);
-        newStates.addAll(states);
-        model.addAttribute("tehsil", tehsil);
-        model.addAttribute("states", newStates);
-        model.addAttribute("districts",
-                District.findDistrictsByStateId(selectedState.getId()));
+        binder.registerCustomEditor(State.class, new StateEditor());
     }
 
 }
