@@ -159,9 +159,7 @@ public class TitleController {
      * Delete.
      *
      * @param id the id
-     * @param model the model
      * @return the string
-     * @author samiksham
      * @since v1.0.0
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)

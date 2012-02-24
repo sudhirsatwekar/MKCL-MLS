@@ -150,7 +150,6 @@ public class StateController extends BaseController {
      * Delete.
      *
      * @param id the id
-     * @param model the model
      * @return the string
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
