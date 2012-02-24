@@ -3,14 +3,6 @@
 <head>
 	<title><spring:message code="titles.new.title" text="Add Title"/></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<script type="text/javascript">
-		$('document').ready(function(){
-			$('#sign').click(function(){
-				var foo = crypto.signText("my text to sign", "ask"); 
-				console.log(foo);
-			})
-		});
-	</script>
 </head>
 <body>
 
