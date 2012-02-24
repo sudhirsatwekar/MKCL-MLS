@@ -3,14 +3,6 @@
 <head>
 	<title><spring:message code="district.new.title" text="Add District"/></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<script type="text/javascript">
-		$('document').ready(function(){
-			$('#sign').click(function(){
-				var foo = crypto.signText("my text to sign", "ask"); 
-				console.log(foo);
-			})
-		});
-	</script>
 </head>
 <body>
 
@@ -25,8 +17,8 @@
 			<form:select path="state" items="${states}" itemValue="id" itemLabel="name">
 	            </form:select>			
 	</p>
-	<p>
-	<p>
+	<c:set var="nameErrors"><form:errors path="name"/></c:set>
+	<p <c:if test="${not empty nameErrors}">class="error"</c:if>>
 	<label class="small"><spring:message code="district.name" text="District"/>&nbsp;*</label>
 		<form:input cssClass="field text medium" path="name" size="50"/><form:errors path="name"  cssClass="field_error" />	
 	</p>

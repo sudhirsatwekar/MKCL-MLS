@@ -12,12 +12,6 @@
 	<h2><spring:message code="district.edit.heading" text="Enter Details "/>
 		[Id:${district.id}]
 	</h2>
-	<p class="section first">
-			<c:if test="${isvalid eq false}">
-				<p class="field_error"><spring:message code="generic.error.label"/></p>
-			</c:if>
-		<form:errors path="version" cssClass="field_error" />		
-	</p>
 	<p>
 	<label class="small"><spring:message code="generic.id" text="Id"/></label>
 		<form:input cssClass="field text small" path="id" readonly="true" /> 
@@ -27,9 +21,10 @@
 		<form:select path="state" items="${states}" itemValue="id" itemLabel="name">
 	    </form:select>			
 	</p>
-	<p>
+	<c:set var="nameErrors"><form:errors path="name"/></c:set>
+	<p <c:if test="${not empty nameErrors}">class="error"</c:if>>
 	<label class="small"><spring:message code="district.name" text="District"/>&nbsp;*</label>
-		<form:input cssClass="field text medium" path="name" size="50"/><form:errors path="name" cssClass="field_error" />	
+		<form:input cssClass="field text medium" path="name" size="50"/><form:errors path="name"  cssClass="field_error" />	
 	</p>
 	<div class="fields">
 		<p class="tright">
