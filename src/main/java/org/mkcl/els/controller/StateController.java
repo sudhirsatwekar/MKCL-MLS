@@ -154,7 +154,7 @@ public class StateController extends BaseController {
      * @return the string
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
-    public @ResponseBody boolean delete(@PathVariable final Long id, final ModelMap model) {
+    public @ResponseBody boolean delete(@PathVariable final Long id) {
         final State state = State.findById(id);
         state.remove();
         return true;

@@ -165,7 +165,7 @@ public class TitleController {
      * @since v1.0.0
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
-    public @ResponseBody boolean delete(@PathVariable final Long id, final ModelMap model) {
+    public @ResponseBody boolean delete(@PathVariable final Long id) {
         Title title = Title.findById(id);
         title.remove();
         return true;
