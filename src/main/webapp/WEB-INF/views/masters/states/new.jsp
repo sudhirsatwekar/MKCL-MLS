@@ -11,7 +11,8 @@
 	<%@ include file="/common/info.jsp" %>
 	<h2><spring:message code="state.new.heading" text="Enter Details"/>
 	</h2>
-	<p>
+	<c:set var="nameErrors"><form:errors path="name"/></c:set>
+	<p <c:if test="${not empty nameErrors}">class="error"</c:if>>
 	<label class="small"><spring:message code="state.name" text="Name"/>&nbsp;*</label>
 		<form:input cssClass="field text medium" path="name" size="50"/><form:errors path="name" cssClass="field_error" />	
 	</p>

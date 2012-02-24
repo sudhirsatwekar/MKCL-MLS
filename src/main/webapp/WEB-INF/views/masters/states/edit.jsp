@@ -15,10 +15,10 @@
 	<label class="small"><spring:message code="generic.id" text="Id"/></label>
 		<form:input cssClass="field text small" path="id" readonly="true" /> 
 	</p>
-	<p>
+	<c:set var="nameErrors"><form:errors path="name"/></c:set>
+	<p <c:if test="${not empty nameErrors}">class="error"</c:if>>
 	<label class="small"><spring:message code="state.name" text="Name"/>&nbsp;*</label>
 		<form:input cssClass="field text medium" path="name" size="50"/><form:errors path="name" cssClass="field_error" />	
-		
 	</p>
 	<div class="fields">
 		<p class="tright">
