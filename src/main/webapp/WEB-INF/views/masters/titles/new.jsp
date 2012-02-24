@@ -12,10 +12,10 @@
 	<h2><spring:message code="title.new.heading" text="Enter Details"/>
 		[Id:&nbsp;New]
 	</h2>
-	<p>
+	<c:set var="nameErrors"><form:errors path="name"/></c:set>
+	<p <c:if test="${not empty nameErrors}">class="error"</c:if>>
 	<label class="small"><spring:message code="title.name" text="Name"/>&nbsp;*</label>
-			<form:input cssClass="field text medium " path="name"/>
-			<form:errors path="name" cssClass="field_error" />	
+			<form:input cssClass="field text medium " path="name"/><form:errors path="name" cssClass="field_error" />	
 	</p>
 	<div class="fields">
 		<p class="tright">
