@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-	http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
-    http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
-    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+    http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<context:load-time-weaver/>
+	<context:load-time-weaver />
 	<context:spring-configured />
-	
+
 	<context:component-scan base-package="org.mkcl.els,com.trg.search" />
-	<context:property-placeholder location="classpath:props/${spring.profiles.active}/app.properties" />
+	<context:property-placeholder
+		location="classpath:props/${spring.profiles.active}/app.properties" />
 	<!-- Disable caching -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-        <property name="cacheSeconds" value="0" />
-    </bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="cacheSeconds" value="0" />
+	</bean>
 	<!-- declare the MessageSource bean -->
-	<bean id="messageSource"
-		class="org.mkcl.els.common.util.DatabaseDrivenMessageSource">
+	<bean id="messageSource" class="org.mkcl.els.common.util.DatabaseDrivenMessageSource">
 		<property name="cacheSeconds" value="60" />
 	</bean>
 
@@ -48,7 +47,7 @@
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy
-                </prop>
+				</prop>
 			</props>
 		</property>
 	</bean>
@@ -68,10 +67,28 @@
 		factory-method="getInstanceForEntityManagerFactory">
 		<constructor-arg ref="entityManagerFactory" />
 	</bean>
-	<ehcache:annotation-driven cache-manager="ehCacheManager" />
-	<bean id="ehCacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation" value="classpath:ehcache.xml" />
+	<!-- <ehcache:annotation-driven cache-manager="ehCacheManager" /> <bean 
+		id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"> 
+		<property name="configLocation" value="classpath:ehcache.xml" /> </bean> -->
+
+	<bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+		<property name="statisticsEnabled" value="true" />
+		<property name="sessionFactory" value="#{entityManagerFactory.sessionFactory}" />
+	</bean>
+
+	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+		<property name="locateExistingServerIfPossible" value="true" />
+	</bean>
+
+	<bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter"
+		lazy-init="false">
+		<property name="server" ref="mbeanServer" />
+		<property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING" />
+		<property name="beans">
+			<map>
+				<entry key="JPA:name=hibernateStatistics" value-ref="hibernateStatisticsMBean" />
+			</map>
+		</property>
 	</bean>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -92,8 +109,7 @@
 		</property>
 	</bean>
 	<bean id="elsMessage" class="org.springframework.mail.SimpleMailMessage">
-		<property name="to"
-			value="vishals@mkcl.org" />
+		<property name="to" value="vishals@mkcl.org" />
 		<property name="from" value="insync@mkcl.org" />
 		<property name="subject" value="ELS: Exception Occured" />
 	</bean>
@@ -101,10 +117,10 @@
 	<bean id="velocityEngine"
 		class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
 		p:resourceLoaderPath="/WEB-INF/views/templates" />
-		
-	<!-- Imports -->	
+
+	<!-- Imports -->
 	<import resource="appServlet/security.xml" />
-	
+
 	<beans profile="qa">
 		<jdbc:embedded-database id="dataSource" type="HSQL">
 		</jdbc:embedded-database>
@@ -122,7 +138,7 @@
 			<property name="minPoolSize" value="5" />
 		</bean>
 	</beans>
-	
+
 	<beans profile="prod">
 		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 			<property name="driverClass" value="${db.driverClassName}" />
