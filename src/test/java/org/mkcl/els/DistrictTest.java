@@ -10,7 +10,12 @@
 package org.mkcl.els;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import junit.framework.Assert;
 
@@ -29,7 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class DistrictTest extends AbstractTest {
 
 
-   /**
+    @PersistenceContext EntityManager em;
+    /**
      * Test persist.
      *
      * @author nileshp
@@ -45,6 +51,30 @@ public class DistrictTest extends AbstractTest {
         district.persist();
         Assert.assertNotNull("Saved District Data ", district);
     }
+
+
+    /**
+     * Test find all.
+     */
+    @Test
+    @Transactional(readOnly = true)
+    public final void testFindAll() {
+        System.out.println(new Date());
+        District.findAll();
+        System.out.println(new Date());
+        State state = new State("testState");
+        state.persist();
+        final District district = new District("Nasik", state);
+        final District district2 = new District("Pune", state);
+        district.persist();
+        district2.persist();
+        Query query = em.createQuery("SELECT d from District d left join fetch d.state s");
+        System.out.println(new Date());
+        List<District> districts = query.getResultList();
+        System.out.println(new Date());
+        Assert.assertTrue(3 == districts.size());
+    }
+
 
 
     /**
