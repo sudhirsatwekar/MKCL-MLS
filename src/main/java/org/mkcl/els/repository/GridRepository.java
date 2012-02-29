@@ -44,11 +44,11 @@ public class GridRepository extends BaseRepository<Grid, Long> {
      * @return the data
      */
     public GridData getData(final Long gridId,
-                            final Integer limit,
-                            Integer page,
-                            final String sidx,
-                            final String order) {
-       /*return getData(gridId, limit, page, sidx, order,
+            final Integer limit,
+            Integer page,
+            final String sidx,
+            final String order) {
+        /*return getData(gridId, limit, page, sidx, order,
                new Locale(CustomParameter.findByName("DEFAULT_LOCALE").getValue()));*/
 
 
@@ -75,6 +75,7 @@ public class GridRepository extends BaseRepository<Grid, Long> {
 
         String select = grid.getQuery() + " ORDER BY " + sidx + " " + order;
         Query query = this.em().createQuery(select);
+        query.setHint("org.hibernate.cacheable", true);
         query.setFirstResult(start);
         query.setMaxResults(limit);
         List<Map<String, Object>> records = query.getResultList();
@@ -96,11 +97,11 @@ public class GridRepository extends BaseRepository<Grid, Long> {
      */
     @SuppressWarnings("unchecked")
     public GridData getData(final Long gridId,
-                            final Integer limit,
-                            Integer page,
-                            final String sidx,
-                            final String order,
-                            final Locale locale) {
+            final Integer limit,
+            Integer page,
+            final String sidx,
+            final String order,
+            final Locale locale) {
 
         //Grid grid = this.find(gridId);
         Grid grid = Grid.findById(gridId);
@@ -119,6 +120,7 @@ public class GridRepository extends BaseRepository<Grid, Long> {
             select = grid.getQuery() + " ORDER BY " + sidx + " " + order;
         }
         countQuery = this.em().createQuery(countSelect);
+        countQuery.setHint("org.hibernate.cacheable", true);
         if (grid.isNativeQuery()) {
             query = this.em().createNativeQuery(select);
 
@@ -153,9 +155,9 @@ public class GridRepository extends BaseRepository<Grid, Long> {
         if (start < 0) {
             start = 0;
         }
+        //query.setHint("org.hibernate.cacheable", true);
         query.setFirstResult(start);
         query.setMaxResults((int) (count > limit ? count : limit));
-
         List<Map<String, Object>> records = query.getResultList();
         GridData gridVO = new GridData(page, totalPages, count, records);
         return gridVO;
@@ -175,12 +177,12 @@ public class GridRepository extends BaseRepository<Grid, Long> {
      */
     @SuppressWarnings("unchecked")
     public GridData getData(final Long gridId,
-                            final Integer limit,
-                            Integer page,
-                            final String sidx,
-                            final String order,
-                            final String filterSql,
-                            final Locale locale) {
+            final Integer limit,
+            Integer page,
+            final String sidx,
+            final String order,
+            final String filterSql,
+            final Locale locale) {
         //Grid grid = this.find(gridId);
         Grid grid = Grid.findById(gridId);
 

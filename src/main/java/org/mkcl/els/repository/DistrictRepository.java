@@ -33,21 +33,6 @@ public class DistrictRepository extends BaseRepository<District, Long> {
     /** The Constant DESC. */
     private static final String DESC = "desc";
 
-    /**
-     * Find by name.
-     *
-     * @param name the name
-     * @return the district
-     * @author nileshp
-     * @since v1.0.0
-     */
-    @Override
-    public District findByName(final String name) {
-        Search search = new Search();
-        search.addFilterEqual("name", name);
-        District district = this.searchUnique(search);
-        return district;
-    }
 
     /**
      * Find districts by state id.
@@ -77,8 +62,8 @@ public class DistrictRepository extends BaseRepository<District, Long> {
      * @since v1.0.0
      */
     public List<District> findDistrictsByStateId(final Long stateId,
-                                                 final String propertySortBy,
-                                                 final boolean descOrder) {
+            final String propertySortBy,
+            final boolean descOrder) {
         Search search = new Search();
         search.addFilterEqual("state.id", stateId + "");
         search.addSort(propertySortBy, descOrder);
@@ -115,8 +100,8 @@ public class DistrictRepository extends BaseRepository<District, Long> {
      * @since v1.0.0
      */
     public List<District> findDistrictsByConstituencyId(final Long constituencyId,
-                                                        final String propertySortBy,
-                                                        final boolean descOrder) {
+            final String propertySortBy,
+            final boolean descOrder) {
         String order = null;
         if (descOrder) {
             order = DESC;

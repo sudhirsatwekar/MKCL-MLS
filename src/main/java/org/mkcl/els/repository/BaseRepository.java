@@ -31,7 +31,7 @@ import com.trg.search.jpa.JPASearchProcessor;
  * @version 1.0.0
  */
 public class BaseRepository<T, ID extends Serializable> extends
-        GenericDAOImpl<T, ID> {
+GenericDAOImpl<T, ID> {
 
     /*
      * (non-Javadoc)
@@ -97,8 +97,8 @@ public class BaseRepository<T, ID extends Serializable> extends
      * @since v1.0.0
      */
     public List<T> findAllSorted(final String property,
-                                 final String locale,
-                                 final boolean desc) {
+            final String locale,
+            final boolean desc) {
         final Search search = new Search();
         search.addSort(property, desc);
         search.addFilterEqual("locale", locale);
@@ -111,25 +111,27 @@ public class BaseRepository<T, ID extends Serializable> extends
      * Find by name.
      *
      * @param name the name
+     * @param locale the locale
      * @return the t
      * @author sujitas
      * @since v1.0.0
      */
     @SuppressWarnings("unchecked")
     public T findByName(final String name,
-                        final String locale) {
+            final String locale) {
         final Search search = new Search();
         search.addFilterEqual("name", name).addFilterEqual("locale", locale);
         final T t = (T) this.searchUnique(search);
         return t;
     }
-    
+
     /**
      * Find by name.
      *
      * @param name the name
      * @return the t
      */
+    @SuppressWarnings("unchecked")
     public T findByName(final String name) {
         final Search search = new Search();
         search.addFilterEqual("name", name);

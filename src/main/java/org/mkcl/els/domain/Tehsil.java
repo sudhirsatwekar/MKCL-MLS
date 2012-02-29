@@ -57,6 +57,10 @@ public class Tehsil implements Serializable {
     @ManyToOne
     private District district;
 
+    /** The state. */
+    @ManyToOne
+    private State state;
+
     /** The locale. */
     @Column(length = 5)
     private String locale;
@@ -77,12 +81,17 @@ public class Tehsil implements Serializable {
      * The Constructor.
      *
      * @param name the name
+     * @param state the state
      * @param district the district
      * @param locale the locale
      * @param version the version
      */
-    public Tehsil(final String name, final District district,
-            final String locale, final Long version) {
+    public Tehsil(
+            final String name,
+            final State state,
+            final District district,
+            final String locale,
+            final Long version) {
         super();
         this.name = name;
         this.district = district;
@@ -124,6 +133,24 @@ public class Tehsil implements Serializable {
      */
     public void setName(final String name) {
         this.name = name;
+    }
+
+    /**
+     * Gets the state.
+     *
+     * @return the state
+     */
+    public State getState() {
+        return state;
+    }
+
+    /**
+     * Sets the state.
+     *
+     * @param state the new state
+     */
+    public void setState(State state) {
+        this.state = state;
     }
 
     /**
@@ -282,4 +309,5 @@ public class Tehsil implements Serializable {
     public String getTehsilLocale() {
         return new Tehsil().getLocale();
     }
+
 }

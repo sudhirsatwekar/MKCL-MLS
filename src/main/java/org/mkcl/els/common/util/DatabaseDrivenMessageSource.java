@@ -115,9 +115,10 @@ public class DatabaseDrivenMessageSource extends AbstractMessageSource {
      * @since v1.0.0
      */
     public void reload() {
-        logger.info("MessageSource Cache reloaded");
-        properties.clear();
-        properties.putAll(loadTexts());
+        synchronized(this.properties){
+            properties.clear();
+            properties.putAll(loadTexts());
+        }
     }
 
     /**
@@ -134,8 +135,6 @@ public class DatabaseDrivenMessageSource extends AbstractMessageSource {
             textForCurrentLanguage = (String) properties.get(Locale.ENGLISH.toString()
                     + "_" + code);
         }
-        // return textForCurrentLanguage != null ? textForCurrentLanguage :
-        // code;
         return textForCurrentLanguage;
     }
 

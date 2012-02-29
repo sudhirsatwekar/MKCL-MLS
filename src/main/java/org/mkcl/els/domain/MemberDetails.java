@@ -11,6 +11,7 @@
 package org.mkcl.els.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +22,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -109,8 +112,8 @@ public class MemberDetails implements Serializable {
     private String motherName;
 
     /** The birth date. */
-    @Column(length = 50)
-    private String birthDate;
+    @Temporal(TemporalType.DATE)
+    private Date birthDate;
 
     /** The place of birth. */
     @Column(length = 100)
@@ -358,7 +361,7 @@ public class MemberDetails implements Serializable {
             final String fatherName,
             final String motherTitle,
             final String motherName,
-            final String birthDate,
+            final Date birthDate,
             final String placeOfBirth,
             final boolean maritalStatus,
             final String marriageDate,
@@ -1029,7 +1032,7 @@ public class MemberDetails implements Serializable {
      *
      * @return the birth date
      */
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
@@ -1038,7 +1041,7 @@ public class MemberDetails implements Serializable {
      *
      * @param birthDate the new birth date
      */
-    public void setBirthDate(final String birthDate) {
+    public void setBirthDate(final Date birthDate) {
         this.birthDate = birthDate;
     }
 

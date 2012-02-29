@@ -688,7 +688,7 @@ public class MemberDetailsRepository extends
         MemberBiographyVO memberBiographyVO = new MemberBiographyVO();
         if (memberDetails != null) {
             memberBiographyVO.setAlias(memberDetails.getAlias());
-            memberBiographyVO.setBirthDate(memberDetails.getBirthDate());
+            memberBiographyVO.setBirthDate(memberDetails.getBirthDate().toString());
             memberBiographyVO.setBooksPublished(memberDetails
                     .getBooksPublished());
             memberBiographyVO

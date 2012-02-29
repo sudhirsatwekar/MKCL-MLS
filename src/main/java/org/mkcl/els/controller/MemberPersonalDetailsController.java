@@ -242,17 +242,17 @@ public class MemberPersonalDetailsController extends BaseController {
      * @param id the id
      * @param model the model
      * @param request the request
-     * @return the string
+     * @return true, if successful
      * @author meenalw
      * @since v1.0.0
      */
     @RequestMapping(value = "{id}/delete", method = RequestMethod.DELETE)
-    public String delete(@PathVariable final Long id,
+    public @ResponseBody boolean delete(@PathVariable final Long id,
             final ModelMap model,
             final HttpServletRequest request) {
         MemberDetails memberDetails = MemberDetails.findById(id);
         memberDetails.remove();
-        return "info";
+        return true;
     }
 
     /**

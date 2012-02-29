@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Configurable
 @Entity
 @Table(name = "districts")
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="org.mkcl.els.domain.District")
 public class District implements Serializable {
 
     /** The Constant serialVersionUID. */
@@ -87,12 +88,13 @@ public class District implements Serializable {
         this.state = state;
     }
 
+
     /**
      * Gets the id.
      *
      * @return the id
      */
-    public final Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -101,7 +103,7 @@ public class District implements Serializable {
      *
      * @param id the new id
      */
-    public final void setId(final Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -110,7 +112,7 @@ public class District implements Serializable {
      *
      * @return the name
      */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
@@ -119,7 +121,7 @@ public class District implements Serializable {
      *
      * @param name the new name
      */
-    public final void setName(final String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -128,7 +130,7 @@ public class District implements Serializable {
      *
      * @return the state
      */
-    public final State getState() {
+    public State getState() {
         return state;
     }
 
@@ -137,7 +139,7 @@ public class District implements Serializable {
      *
      * @param state the new state
      */
-    public final void setState(final State state) {
+    public void setState(final State state) {
         this.state = state;
     }
 
@@ -196,11 +198,12 @@ public class District implements Serializable {
      * Find by name.
      *
      * @param name the name
+     * @param locale the locale
      * @return the district
      */
     @Transactional(readOnly = true)
-    public static District findByName(final String name) {
-        return getDistrictRepository().findByName(name);
+    public static District findByName(final String name, final String locale) {
+        return getDistrictRepository().findByName(name, locale);
     }
 
     /**
@@ -224,8 +227,8 @@ public class District implements Serializable {
      */
     @Transactional(readOnly = true)
     public static List<District> findDistrictsByStateId(final Long id,
-                                                        final String property,
-                                                        final boolean descOrder) {
+            final String property,
+            final boolean descOrder) {
         return getDistrictRepository().findDistrictsByStateId(
                 id, property, descOrder);
     }
@@ -251,8 +254,8 @@ public class District implements Serializable {
      */
     @Transactional(readOnly = true)
     public static List<District> findDistrictsByConstituencyId(final Long constituencyId,
-                                                               final String propertySortBy,
-                                                               final boolean descOrder) {
+            final String propertySortBy,
+            final boolean descOrder) {
         return getDistrictRepository().findDistrictsByConstituencyId(
                 constituencyId, propertySortBy, descOrder);
     }
@@ -275,9 +278,7 @@ public class District implements Serializable {
      */
     @Transactional
     public District persist() {
-        getDistrictRepository().save(this);
-        getDistrictRepository().flush();
-        return this;
+        return getDistrictRepository().save(this);
     }
 
     /**
@@ -287,9 +288,7 @@ public class District implements Serializable {
      */
     @Transactional
     public District update() {
-        getDistrictRepository().merge(this);
-        getDistrictRepository().flush();
-        return this;
+        return getDistrictRepository().merge(this);
     }
 
     /**
@@ -298,7 +297,6 @@ public class District implements Serializable {
     @Transactional
     public void remove() {
         getDistrictRepository().remove(this);
-        getDistrictRepository().flush();
     }
 
     /**
@@ -311,4 +309,26 @@ public class District implements Serializable {
         District district = District.findById(this.id);
         return district.getVersion().equals(this.version);
     }
+
+    /**
+     * Find all.
+     *
+     * @return the list
+     */
+    @Transactional(readOnly = true)
+    public static List<District> findAll() {
+        return getDistrictRepository().findAll();
+    }
+
+    /**
+     * Find all.
+     *
+     * @param locale the locale
+     * @return the list
+     */
+    @Transactional(readOnly = true)
+    public static List<District> findAll(final String locale) {
+        return getDistrictRepository().findAll(locale);
+    }
+
 }

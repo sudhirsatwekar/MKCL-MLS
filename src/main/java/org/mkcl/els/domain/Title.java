@@ -153,13 +153,15 @@ public class Title implements Serializable {
      * Find by name.
      *
      * @param name the name
+     * @param locale the locale
      * @return the title
      * @author samiksham
      * @since v1.0.0
      */
     @Transactional(readOnly = true)
-    public static Title findByName(final String name) {
-        return getRepository().findByName(name);
+    public static Title findByName(final String name,
+            final String locale) {
+        return getRepository().findByName(name, locale);
     }
 
     /**
