@@ -13,10 +13,10 @@
 		<pattern>/grid/new</pattern>
 		<pattern>/grid/*/edit</pattern>
 		<pattern>/grid/*/delete</pattern>
-		<pattern>/party</pattern>
-		<pattern>/party/new</pattern>
-		<pattern>/party/*/edit</pattern>
-		<pattern>/party/*/delete</pattern>
+		<pattern>/parties</pattern>
+		<pattern>/parties/new</pattern>
+		<pattern>/parties/*/edit</pattern>
+		<pattern>/parties/*/delete</pattern>
 		<pattern>/assemblies</pattern>
 		<pattern>/assemblies/new</pattern>
 		<pattern>/assemblies/*/edit</pattern>
