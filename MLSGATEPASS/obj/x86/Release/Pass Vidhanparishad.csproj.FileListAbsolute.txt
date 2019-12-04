@@ -1,0 +1,12 @@
+D:\R&D\MLSGATEPASS\bin\Release\Pass Vidhanparishad.exe.config
+D:\R&D\MLSGATEPASS\bin\Release\Pass Vidhanparishad.exe
+D:\R&D\MLSGATEPASS\bin\Release\Pass Vidhanparishad.pdb
+D:\R&D\MLSGATEPASS\bin\Release\Webcam_Test.EXE
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass_Vidhanparishad.Master.resources
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass_Vidhanparishad.Form3.resources
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass_Vidhanparishad.Form1.resources
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass_Vidhanparishad.Form2.resources
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass_Vidhanparishad.Properties.Resources.resources
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass Vidhanparishad.csproj.GenerateResource.Cache
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass Vidhanparishad.exe
+D:\R&D\MLSGATEPASS\obj\x86\Release\Pass Vidhanparishad.pdb

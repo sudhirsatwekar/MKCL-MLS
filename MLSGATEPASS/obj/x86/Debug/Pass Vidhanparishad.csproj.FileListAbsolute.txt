@@ -1,0 +1,13 @@
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass_Vidhanparishad.Master.resources
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass_Vidhanparishad.Form3.resources
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass_Vidhanparishad.Form1.resources
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass_Vidhanparishad.Form2.resources
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass_Vidhanparishad.Properties.Resources.resources
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass Vidhanparishad.csproj.GenerateResource.Cache
+D:\R&D\MLSGATEPASS\bin\Debug\Pass Vidhanparishad.exe.config
+D:\R&D\MLSGATEPASS\bin\Debug\Pass Vidhanparishad.exe
+D:\R&D\MLSGATEPASS\bin\Debug\Pass Vidhanparishad.pdb
+D:\R&D\MLSGATEPASS\bin\Debug\Webcam_Test.EXE
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass Vidhanparishad.exe
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass Vidhanparishad.pdb
+D:\R&D\MLSGATEPASS\obj\x86\Debug\Pass Vidhanparishad.csprojResolveAssemblyReference.cache
